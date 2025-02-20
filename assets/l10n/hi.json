@@ -1,5 +1,17 @@
 {
     "user": "उपयोगकर्ता",
     "employer": "नियोक्ता",
-    "discover_more": "और जानें"
-  }
+    "discover_more": "और जानें",
+    "user_signin": "उपयोगकर्ता साइन इन",
+    "employer_signin": "नियोक्ता साइन इन",
+    "user_signup": "उपयोगकर्ता साइन अप",
+    "employer_signup": "नियोक्ता साइन अप",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "confirm_password": "पासवर्ड की पुष्टि करें",
+    "full_name": "पूरा नाम",
+    "signin": "साइन इन",
+    "signup": "साइन अप",
+    "no_account": "क्या आपके पास अकाउंट नहीं है? साइन अप करें",
+    "have_account": "पहले से अकाउंट है? साइन इन करें"
+}

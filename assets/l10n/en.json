@@ -1,5 +1,17 @@
 {
     "user": "User",
     "employer": "Employer",
-    "discover_more": "Discover more"
+    "discover_more": "Discover more",
+    "user_signin": "User Sign In",
+    "employer_signin": "Employer Sign In",
+    "user_signup": "User Sign Up",
+    "employer_signup": "Employer Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "full_name": "Full Name",
+    "signin": "Sign In",
+    "signup": "Sign Up",
+    "no_account": "Don't have an account? Sign Up",
+    "have_account": "Already have an account? Sign In"
   }

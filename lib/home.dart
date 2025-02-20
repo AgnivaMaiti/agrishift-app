@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:agri/Providers/language_provider.dart';
+import 'package:agri/pages/signin_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -106,7 +107,14 @@ class _HomeState extends State<Home> {
                       ),
                       SizedBox(height: 12),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignIn(userType: 'user'),
+                            ),
+                          );
+                        },
                         child: Text(localizedStrings['user'] ?? 'User'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFF2D6A4F),
@@ -138,7 +146,15 @@ class _HomeState extends State<Home> {
                       ),
                       SizedBox(height: 12),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SignIn(userType: 'employer'),
+                            ),
+                          );
+                        },
                         child: Text(localizedStrings['employer'] ?? 'Employer'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFF2D6A4F),

@@ -1,5 +1,18 @@
 {
     "user": "वापरकर्ता",
     "employer": "नियोक्ता",
-    "discover_more": "अधिक जाणून घ्या"
-  }
+    "discover_more": "अधिक जाणून घ्या",
+        "user_signin": "वापरकर्ता साइन इन",
+        "employer_signin": "नियोक्ता साइन इन",
+        "user_signup": "वापरकर्ता साइन अप",
+        "employer_signup": "नियोक्ता साइन अप",
+        "email": "ईमेल",
+        "password": "पासवर्ड",
+        "confirm_password": "पासवर्डची पुष्टी करा",
+        "full_name": "पूर्ण नाव",
+        "signin": "साइन इन",
+        "signup": "साइन अप",
+        "no_account": "तुमच्याकडे अकाउंट नाही? साइन अप करा",
+        "have_account": "आधीपासून अकाउंट आहे? साइन इन करा"
+    }
+    
