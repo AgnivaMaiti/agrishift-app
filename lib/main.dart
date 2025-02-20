@@ -1,11 +1,15 @@
-import 'package:agri/Providers/language_provider.dart';
-import 'package:agri/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:agri/Providers/language_provider.dart';
+import 'package:agri/splash.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final languageProvider = LanguageProvider();
+  await languageProvider.loadLanguage('en'); // Load default language
+
   runApp(ChangeNotifierProvider(
-    create: (_) => LanguageProvider(),
+    create: (_) => languageProvider,
     child: MyApp(),
   ));
 }

@@ -1,4 +1,5 @@
 {
-    "title": "Hello, Welcome!",
-    "change_language": "Change Language"
-} 
+    "user": "User",
+    "employer": "Employer",
+    "discover_more": "Discover more"
+  }
