@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:agri/Providers/language_provider.dart';
 import 'signup_page.dart';
+import 'farmer_home.dart';
 
 class SignIn extends StatefulWidget {
   final String userType; // 'user' or 'employer'
@@ -27,9 +28,11 @@ class _SignInState extends State<SignIn> {
 
   void _handleSignIn() {
     if (_formKey.currentState!.validate()) {
-      // Implement sign in logic here
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+      // Navigate to FarmerHome after successful validation
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => FarmerHome()),
+      );
     }
   }
 
