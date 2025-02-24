@@ -6,7 +6,7 @@ import 'package:agri/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final languageProvider = LanguageProvider();
-  await languageProvider.loadLanguage('en'); // Load default language
+  await languageProvider.loadLanguage('en');
 
   runApp(ChangeNotifierProvider(
     create: (_) => languageProvider,
