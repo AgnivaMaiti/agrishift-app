@@ -5,6 +5,10 @@ import 'package:flutter/services.dart';
 class LanguageProvider extends ChangeNotifier {
   Locale _locale = Locale('en');
 
+  String translate(String key) {
+    return _localizedStrings[key] ?? key;
+  }
+
   static const Map<String, String> languageNames = {
     'en': 'English',
     'hi': 'हिंदी',

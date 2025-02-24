@@ -4,6 +4,7 @@ import 'package:agri/Providers/language_provider.dart';
 import 'package:agri/pages/job_search_screen.dart';
 import 'package:agri/pages/government_schemes_screen.dart';
 import 'package:agri/pages/marketplace_screen.dart';
+import 'package:agri/pages/about_us.dart';
 
 class FarmerHome extends StatefulWidget {
   const FarmerHome({super.key});
@@ -17,13 +18,15 @@ class _FarmerHomeState extends State<FarmerHome> {
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFF4D7C0F),
         elevation: 0,
         title: Text(
-          'Hello, Farmers',
+          languageProvider.translate('hello_farmers'),
           style: TextStyle(color: Colors.white),
         ),
         actions: [
@@ -40,13 +43,15 @@ class _FarmerHomeState extends State<FarmerHome> {
           ),
         ],
       ),
-      endDrawer: _buildDrawer(),
+      endDrawer: _buildDrawer(context),
       body: _buildSelectedScreen(),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
-  Widget _buildDrawer() {
+  Widget _buildDrawer(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -77,21 +82,67 @@ class _FarmerHomeState extends State<FarmerHome> {
           ),
           ListTile(
             leading: Icon(Icons.person),
-            title: Text('Profile'),
+            title: Text(languageProvider.translate('profile')),
             onTap: () => Navigator.pop(context),
           ),
           ListTile(
             leading: Icon(Icons.language),
-            title: Text('Change Language'),
-            onTap: () => Navigator.pop(context),
+            title: Text(languageProvider.translate('change_language')),
+            onTap: () {
+              Navigator.pop(context);
+              _showLanguageDialog(context);
+            },
           ),
           ListTile(
             leading: Icon(Icons.info),
-            title: Text('About Us'),
-            onTap: () => Navigator.pop(context),
+            title: Text(languageProvider.translate('about_us')),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AboutUsScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    final languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(languageProvider.translate('change_language')),
+          content: Container(
+            width: double.minPositive,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: LanguageProvider.languageNames.length,
+              itemBuilder: (BuildContext context, int index) {
+                String langCode =
+                    LanguageProvider.languageNames.keys.elementAt(index);
+                String langName =
+                    LanguageProvider.languageNames.values.elementAt(index);
+
+                return ListTile(
+                  title: Text(langName),
+                  onTap: () {
+                    languageProvider.loadLanguage(langCode);
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -110,7 +161,9 @@ class _FarmerHomeState extends State<FarmerHome> {
     }
   }
 
-  Widget _buildBottomNavigationBar() {
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return BottomNavigationBar(
       backgroundColor: Colors.black,
       type: BottomNavigationBarType.fixed,
@@ -125,19 +178,19 @@ class _FarmerHomeState extends State<FarmerHome> {
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.crop),
-          label: 'Crop Guide',
+          label: languageProvider.translate('crop_guide'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.work),
-          label: 'Jobs',
+          label: languageProvider.translate('jobs'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.policy),
-          label: 'Schemes',
+          label: languageProvider.translate('schemes'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.store),
-          label: 'Market',
+          label: languageProvider.translate('market'),
         ),
       ],
     );
@@ -147,6 +200,8 @@ class _FarmerHomeState extends State<FarmerHome> {
 class CropRecommendationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -155,7 +210,7 @@ class CropRecommendationScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                _buildSearchBar(),
+                _buildSearchBar(context),
                 SizedBox(height: 20),
                 WeatherCard(),
               ],
@@ -167,7 +222,7 @@ class CropRecommendationScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Crop Recommendations',
+                  languageProvider.translate('crop_recommendations'),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -177,7 +232,7 @@ class CropRecommendationScreen extends StatelessWidget {
                 CommoditiesGrid(),
                 SizedBox(height: 24),
                 Text(
-                  'My Fields',
+                  languageProvider.translate('my_fields'),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -187,14 +242,14 @@ class CropRecommendationScreen extends StatelessWidget {
                 FieldCard(),
                 SizedBox(height: 20),
                 Text(
-                  'Recommended Actions',
+                  languageProvider.translate('recommended_actions'),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 16),
-                _buildRecommendedActions(),
+                _buildRecommendedActions(context),
               ],
             ),
           ),
@@ -203,7 +258,9 @@ class CropRecommendationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -218,7 +275,7 @@ class CropRecommendationScreen extends StatelessWidget {
             child: TextField(
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Search here...',
+                hintText: languageProvider.translate('search_placeholder'),
                 hintStyle: TextStyle(color: Colors.white70),
                 border: InputBorder.none,
                 suffixIcon: Icon(Icons.mic, color: Colors.white),
@@ -230,7 +287,7 @@ class CropRecommendationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecommendedActions() {
+  Widget _buildRecommendedActions(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -291,6 +348,8 @@ class CropRecommendationScreen extends StatelessWidget {
 class WeatherCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -338,13 +397,13 @@ class WeatherCard extends StatelessWidget {
                   WeatherDetail(
                     icon: Icons.thermostat,
                     value: '22°C',
-                    label: 'Soil Temp',
+                    label: languageProvider.translate('soil_temp'),
                   ),
                   SizedBox(height: 8),
                   WeatherDetail(
                     icon: Icons.water_drop,
                     value: '55%',
-                    label: 'Humidity',
+                    label: languageProvider.translate('humidity'),
                   ),
                 ],
               ),
@@ -357,12 +416,12 @@ class WeatherCard extends StatelessWidget {
               WeatherDetail(
                 icon: Icons.air,
                 value: '5 m/s',
-                label: 'Wind',
+                label: languageProvider.translate('wind'),
               ),
               WeatherDetail(
                 icon: Icons.water,
                 value: '0 mm',
-                label: 'Precipitation',
+                label: languageProvider.translate('precipitation'),
               ),
               Column(
                 children: [
@@ -371,7 +430,7 @@ class WeatherCard extends StatelessWidget {
                     style: TextStyle(color: Colors.white70),
                   ),
                   Text(
-                    'Sunrise',
+                    languageProvider.translate('sunrise'),
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
@@ -383,7 +442,7 @@ class WeatherCard extends StatelessWidget {
                     style: TextStyle(color: Colors.white70),
                   ),
                   Text(
-                    'Sunset',
+                    languageProvider.translate('sunset'),
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
@@ -443,6 +502,9 @@ class CommoditiesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    // You might want to add translations for commodity names as well
+
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
