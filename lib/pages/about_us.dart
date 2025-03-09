@@ -4,7 +4,7 @@ import 'package:agri/Providers/language_provider.dart';
 import 'package:agri/pages/team_page.dart';
 
 class AboutUsScreen extends StatelessWidget {
-  const AboutUsScreen({Key? key}) : super(key: key);
+  const AboutUsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,54 +12,57 @@ class AboutUsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF4D7C0F),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.black,
         elevation: 0,
-        title: Text(
-          languageProvider.translate('about_us'),
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        toolbarHeight: 0,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header image
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFF4D7C0F),
-                image: DecorationImage(
-                  image: AssetImage('assets/images/farming_banner.jpg'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.3),
-                    BlendMode.darken,
+            Stack(
+              children: [
+                Image(
+                  image: AssetImage('assets/images/about.jpg'),
+                  fit: BoxFit
+                      .cover, // Ensures the background image covers the entire area
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image(
+                          image: AssetImage('assets/images/trim_logo.png'),
+                          height: 40,
+                          width: 40,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Agrovigya',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors
+                                .white, // Ensure it's visible on the background
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              child: Center(
-                child: Text(
-                  'Agrovigya',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              ],
             ),
-
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // About section
-                  SectionTitle(title: 'About Agrovigya'),
+                  SectionTitle(
+                      title:
+                          'Transforming Agriculture, Empowering Rural Workforce, and Bridging Employment Gaps for a Sustainable Future'),
                   SizedBox(height: 16),
                   Text(
                     'Agrovigya is a pioneering digital platform committed to transforming India\'s agricultural landscape by addressing disguised unemployment and fostering sustainable livelihoods. Our mission is to empower farmers, job seekers, and rural workers by integrating technology-driven solutions that bridge the gap between agriculture, employment, and skill development.',
@@ -87,9 +90,9 @@ class AboutUsScreen extends StatelessWidget {
 
                   SizedBox(height: 32),
 
-                  // Vision section
                   SectionTitle(title: 'Our Vision'),
                   SizedBox(height: 16),
+                  Image(image: AssetImage('assets/images/about_1.jpg')),
                   Text(
                     'At Agrovigya, we envision a future where agriculture thrives through modernization, rural employment is optimized, and individuals have access to the skills and opportunities necessary for economic growth. Our goal is to create a sustainable ecosystem where farmers maximize productivity through data-driven insights, job seekers find meaningful employment beyond agriculture, and skill development bridges the gap between industry needs and workforce capabilities.',
                     style: TextStyle(
@@ -111,6 +114,7 @@ class AboutUsScreen extends StatelessWidget {
                   // Mission section
                   SectionTitle(title: 'Our Mission'),
                   SizedBox(height: 16),
+                  Image(image: AssetImage('assets/images/about_2.jpg')),
                   Text(
                     'Our mission is to empower farmers with smarter agricultural practices, connect job seekers with meaningful employment opportunities, and bridge skill gaps through targeted upskilling programs. By integrating government schemes, financial support, and industry-driven training, we aim to enhance productivity, increase incomes, and create a self-reliant rural economy.',
                     style: TextStyle(
@@ -136,17 +140,21 @@ class AboutUsScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TeamPage(),
+                            builder: (context) => ProfessionalDirectory(),
                           ),
                         );
                       },
-                      icon: Icon(Icons.groups),
+                      icon: Icon(
+                        Icons.groups_2_outlined,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                       label: Text(
-                        languageProvider.translate('meet_our_team'),
+                        languageProvider.translate('Meet Our Team'),
                         style: TextStyle(fontSize: 16),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4D7C0F),
+                        backgroundColor: const Color(0xFF147b2c),
                         foregroundColor: Colors.white,
                         padding:
                             EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -158,24 +166,24 @@ class AboutUsScreen extends StatelessWidget {
                   ),
 
                   SizedBox(height: 40),
+                  //   TeamMember()
 
-                  // Contact info
-                  SectionTitle(title: languageProvider.translate('contact_us')),
-                  SizedBox(height: 16),
-                  ContactItem(
-                    icon: Icons.email,
-                    text: 'support@agriapp.com',
-                  ),
-                  SizedBox(height: 8),
-                  ContactItem(
-                    icon: Icons.phone,
-                    text: '+91 98765 43210',
-                  ),
-                  SizedBox(height: 8),
-                  ContactItem(
-                    icon: Icons.location_on,
-                    text: languageProvider.translate('address'),
-                  ),
+                  //   SectionTitle(title: languageProvider.translate('contact_us')),
+                  //   SizedBox(height: 16),
+                  //   ContactItem(
+                  //     icon: Icons.email,
+                  //     text: 'support@agriapp.com',
+                  //   ),
+                  //   SizedBox(height: 8),
+                  //   ContactItem(
+                  //     icon: Icons.phone,
+                  //     text: '+91 98765 43210',
+                  //   ),
+                  //   SizedBox(height: 8),
+                  //   ContactItem(
+                  //     icon: Icons.location_on,
+                  //     text: languageProvider.translate('address'),
+                  //   ),
                 ],
               ),
             ),
@@ -189,7 +197,7 @@ class AboutUsScreen extends StatelessWidget {
 class SectionTitle extends StatelessWidget {
   final String title;
 
-  const SectionTitle({required this.title});
+  const SectionTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -201,14 +209,14 @@ class SectionTitle extends StatelessWidget {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF4D7C0F),
+            color: const Color(0xFF147b2c),
           ),
         ),
         SizedBox(height: 8),
         Container(
           width: 50,
           height: 3,
-          color: const Color(0xFF4D7C0F),
+          color: const Color(0xFF147b2c),
         ),
       ],
     );
@@ -220,6 +228,7 @@ class ContactItem extends StatelessWidget {
   final String text;
 
   const ContactItem({
+    super.key,
     required this.icon,
     required this.text,
   });
@@ -230,7 +239,7 @@ class ContactItem extends StatelessWidget {
       children: [
         Icon(
           icon,
-          color: Color(0xFF4D7C0F),
+          color: Color(0xFF147b2c),
           size: 20,
         ),
         SizedBox(width: 12),
@@ -242,5 +251,24 @@ class ContactItem extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class TeamMember extends StatefulWidget {
+  const TeamMember({super.key});
+
+  @override
+  State<TeamMember> createState() => _TeamMemberState();
+}
+
+class _TeamMemberState extends State<TeamMember> {
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, crossAxisSpacing: 10, mainAxisExtent: 10),
+        itemBuilder: (context, index) {
+          return Container();
+        });
   }
 }

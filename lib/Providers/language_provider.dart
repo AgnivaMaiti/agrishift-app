@@ -30,7 +30,7 @@ class LanguageProvider extends ChangeNotifier {
     _locale = Locale(languageCode);
     try {
       String jsonString =
-          await rootBundle.loadString('assets/l10n/${languageCode}.json');
+          await rootBundle.loadString('assets/l10n/$languageCode.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
       _localizedStrings =
           jsonMap.map((key, value) => MapEntry(key, value.toString()));

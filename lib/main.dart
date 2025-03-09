@@ -23,6 +23,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       locale: languageProvider.locale,
+      theme: ThemeData(
+        fontFamily: 'Tenor Sans',
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.black,
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
+      ),
       home: Splash(),
     );
   }

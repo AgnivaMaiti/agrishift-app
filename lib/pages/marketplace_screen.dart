@@ -1,4 +1,3 @@
-// lib/pages/marketplace_screen.dart
 import 'package:flutter/material.dart';
 
 class MarketplaceScreen extends StatelessWidget {
@@ -6,22 +5,23 @@ class MarketplaceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: EdgeInsets.all(size.width * 0.05),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Agricultural Marketplace',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: size.width * 0.05,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: size.height * 0.02),
             MarketplaceCategories(),
-            SizedBox(height: 20),
+            SizedBox(height: size.height * 0.03),
             ProductsList(),
           ],
         ),
@@ -36,20 +36,22 @@ class MarketplaceCategories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categories = ['All', 'Seeds', 'Equipment', 'Fertilizers', 'Tools'];
-
     return SizedBox(
-      height: 40,
+      height: MediaQuery.of(context).size.height * 0.05,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: EdgeInsets.only(right: 8),
+            padding: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.02),
             child: FilterChip(
-              label: Text(categories[index]),
-              onSelected: (bool selected) {
-                // Handle category selection
-              },
+              backgroundColor: Color(0xff147B2C),
+              label: Text(
+                categories[index],
+                style: TextStyle(color: Colors.white),
+              ),
+              onSelected: (bool selected) {},
             ),
           );
         },
@@ -79,26 +81,17 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: size.height * 0.02),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(size.width * 0.04),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey[300]!),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(Icons.agriculture, size: 40),
-            ),
-            SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,29 +99,51 @@ class ProductCard extends StatelessWidget {
                   Text(
                     'Product ${index + 1}',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: size.width * 0.045,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  SizedBox(height: size.height * 0.01),
                   Text('Price: \$XX.XX'),
                   Text('Seller: Farmer Name'),
-                  SizedBox(height: 8),
+                  SizedBox(height: size.height * 0.015),
                   Row(
                     children: [
-                      OutlinedButton(
-                        onPressed: () {
-                          // Handle contact seller
-                        },
-                        child: Text('Contact Seller'),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.045,
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 1, color: Color(0xff147b2c)),
+                              borderRadius: BorderRadius.circular(50),
+                              color: Colors.white),
+                          child: Center(
+                            child: Text(
+                              'Contact Seller',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ),
                       ),
-                      SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle buy now
-                        },
-                        child: Text('Buy Now'),
-                      ),
+                      SizedBox(width: size.width * 0.02),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.045,
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: Color(0xff147b2c)),
+                          child: Center(
+                            child: Text(
+                              'Buy Now',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ],

@@ -1,4 +1,3 @@
-// lib/pages/job_search_screen.dart
 import 'package:flutter/material.dart';
 
 class JobSearchScreen extends StatelessWidget {
@@ -6,20 +5,22 @@ class JobSearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double paddingValue = MediaQuery.of(context).size.width * 0.05;
+
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: EdgeInsets.all(paddingValue),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Available Jobs',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: MediaQuery.of(context).size.width * 0.05,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             JobsList(),
           ],
         ),
@@ -49,13 +50,24 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double paddingValue = MediaQuery.of(context).size.width * 0.04;
+    final double borderRadiusValue = MediaQuery.of(context).size.width * 0.03;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: paddingValue),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(paddingValue),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(borderRadiusValue),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: MediaQuery.of(context).size.width * 0.02,
+              offset: Offset(2, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,21 +75,35 @@ class JobCard extends StatelessWidget {
             Text(
               'Farm Worker Position ${index + 1}',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: MediaQuery.of(context).size.width * 0.055,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8),
-            JobDetail(icon: Icons.location_on, text: 'Farm Location'),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            JobDetail(icon: Icons.location_on_outlined, text: 'Farm Location'),
             JobDetail(icon: Icons.money, text: 'Salary: \$XX,XXX'),
-            JobDetail(icon: Icons.work_history, text: 'Experience: X years'),
-            SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () {
-                // Handle job application
-              },
-              child: Text('Apply Now'),
-            ),
+            JobDetail(
+                icon: Icons.work_history_outlined, text: 'Experience: X years'),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+            Align(
+              alignment: Alignment.centerRight,
+              child: InkWell(
+                onTap: () {},
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.045,
+                  width: MediaQuery.of(context).size.width * 0.35,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Color(0xff147b2c)),
+                  child: Center(
+                    child: Text(
+                      'Apply Now',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -97,13 +123,20 @@ class JobDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double iconSize = MediaQuery.of(context).size.width * 0.06;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.005),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: Colors.grey[600]),
-          SizedBox(width: 8),
-          Text(text),
+          Icon(icon, size: iconSize, color: Colors.grey[600]),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+          Text(
+            text,
+            style:
+                TextStyle(fontSize: MediaQuery.of(context).size.height * 0.02),
+          ),
         ],
       ),
     );

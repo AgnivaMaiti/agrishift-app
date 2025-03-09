@@ -1,4 +1,4 @@
-import 'package:agri/home.dart';
+import 'package:agri/pageview.dart';
 import 'package:flutter/material.dart';
 
 class Splash extends StatefulWidget {
@@ -20,7 +20,8 @@ class _SplashState extends State<Splash> {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => Home(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            SlideshowScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -37,7 +38,7 @@ class _SplashState extends State<Splash> {
       ),
       body: Center(
         child: CircleAvatar(
-            radius: MediaQuery.of(context).size.height * 0.12,
+            radius: MediaQuery.of(context).size.height * 0.15,
             backgroundColor: Colors.transparent,
             backgroundImage: AssetImage('assets/images/logo.jpeg')),
       ),
