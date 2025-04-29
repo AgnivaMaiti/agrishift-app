@@ -60,6 +60,36 @@
     "price": "ମୂଲ୍ୟ",
     "seller": "ବିକ୍ରେତା",
     "contact_seller": "ବିକ୍ରେତାଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ",
-    "buy_now": "ଏବେ କିଣନ୍ତୁ"
+    "buy_now": "ଏବେ କିଣନ୍ତୁ",
+    "crop_recommendation_tool": "ଫସଲ ସୁପାରିଶ ଉପକରଣ",
+    "enter_soil_climate_data": "ମାଟି ଏବଂ ଜଳବାୟୁ ତଥ୍ୟ ପ୍ରବେଶ କରାନ୍ତୁ",
+    "nitrogen": "ନାଇଟ୍ରୋଜେନ",
+    "phosphorus": "ଫସ୍ଫୋରସ",
+    "potassium": "ପଟାସିଅମ୍",
+    "temperature": "ତାପମାନ",
+    "humidity": "ଆର୍ଦ୍ରତା",
+    "ph_value": "ପିଏଚ୍ ମୂଲ୍ୟ",
+    "rainfall": "ବର୍ଷାପାତ",
+    "required_field": "ଏହି ଘର ଆବଶ୍ୟକ",
+    "get_recommendation": "ସୁପାରିଶ ପାଆନ୍ତୁ",
+    "recommended_crop": "ସୁପାରିଶିତ ଫସଲ",
+    "recommendation_note": "ଏହି ଫସଲ ଆପଣଙ୍କ ମାଟି ଏବଂ ଜଳବାୟୁ ପାଇଁ ଉପଯୁକ୍ତ ।",
+    "start_new_prediction": "ନୂଆ ପୂର୍ବାନୁମାନ ଆରମ୍ଭ କରନ୍ତୁ",
+
+    "crop": "ଫସଲ",
+    "area_in_hectares": "କ୍ଷେତ୍ରଫଳ (ହେକ୍ଟର)",
+    "season": "ଋତୁ",
+    "wage_type": "ମଜୁରି ପ୍ରକାର",
+    "calculate_labor_cost": "ଶ୍ରମ ଖର୍ଚ୍ଚ ହିସାବ କରନ୍ତୁ",
+    "estimation_results": "ଆନୁମାନିକ ଫଳାଫଳ",
+    "area": "କ୍ଷେତ୍ରଫଳ",
+    "labor_required": "ଆବଶ୍ୟକ ଶ୍ରମିକ",
+    "cost_per_hectare": "ପ୍ରତି ହେକ୍ଟର ଖର୍ଚ୍ଚ",
+    "total_cost": "ମୋଟ ଖର୍ଚ୍ଚ",
+    "workers": "ଶ୍ରମିକ",
+
+    "labor_estimation": "ଶ୍ରମ ଅନୁମାନ"
+
+    
   }
   

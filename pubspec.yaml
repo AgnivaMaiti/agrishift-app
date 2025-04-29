@@ -43,6 +43,8 @@ dependencies:
   geocoding: ^3.0.0
   shared_preferences: ^2.5.2
   skeletonizer: ^1.4.3
+  tflite_flutter: ^0.11.0
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +73,9 @@ flutter:
   assets:
     - assets/images/
     - assets/l10n/
+    - assets/models/crop_model.tflite
+    - assets/models/cost_model.tflite
+    - assets/models/demand_model.tflite
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -88,8 +93,8 @@ flutter:
     - family: Poppins
       fonts:
         - asset: assets/fonts/Poppins-Bold.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+    #       - asset: fonts/Schyler-Italic.ttf
+    #         style: italic
     - family: Tenor Sans
       fonts:
         - asset: assets/fonts/TenorSans-Regular.ttf

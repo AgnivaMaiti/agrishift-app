@@ -60,5 +60,35 @@
     "price": "মূল্য",
     "seller": "বিক্রেতা",
     "contact_seller": "বিক্রেতার সাথে যোগাযোগ করুন",
-    "buy_now": "এখনই কিনুন"
+    "buy_now": "এখনই কিনুন",
+
+    "crop_recommendation_tool": "ফসল সুপারিশ টুল",
+    "enter_soil_climate_data": "মাটি ও জলবায়ুর তথ্য লিখুন",
+    "nitrogen": "নাইট্রোজেন",
+    "phosphorus": "ফসফরাস",
+    "potassium": "পটাশিয়াম",
+    "temperature": "তাপমাত্রা",
+    "humidity": "আর্দ্রতা",
+    "ph_value": "পিএইচ মান",
+    "rainfall": "বৃষ্টিপাত",
+    "required_field": "এই ঘরটি পূরণ করা আবশ্যক",
+    "get_recommendation": "সুপারিশ পান",
+    "recommended_crop": "সুপারিশকৃত ফসল",
+    "recommendation_note": "এই ফসল আপনার বর্তমান মাটি ও জলবায়ুর জন্য সবচেয়ে উপযুক্ত।",
+    "start_new_prediction": "নতুন পূর্বাভাস শুরু করুন",
+
+    "crop": "ফসল",
+    "area_in_hectares": "এলাকা (হেক্টরে)",
+    "season": "ঋতু",
+    "wage_type": "মজুরি ধরন",
+    "calculate_labor_cost": "শ্রম খরচ হিসাব করুন",
+    "estimation_results": "মূল্যায়নের ফলাফল",
+    "area": "এলাকা",
+    "labor_required": "প্রয়োজনীয় শ্রমিক",
+    "cost_per_hectare": "প্রতি হেক্টরে খরচ",
+    "total_cost": "মোট খরচ",
+    "workers": "জন",
+
+    "labor_estimation": "শ্রমের হিসাব"
+
 }

@@ -60,5 +60,35 @@
     "price": "किंमत",
     "seller": "विक्रेता",
     "contact_seller": "विक्रेत्याशी संपर्क साधा",
-    "buy_now": "आता खरेदी करा"
+    "buy_now": "आता खरेदी करा",
+
+    "crop_recommendation_tool": "पिक शिफारस साधन",
+    "enter_soil_climate_data": "माती व हवामानाची माहिती प्रविष्ट करा",
+    "nitrogen": "नायट्रोजन",
+    "phosphorus": "फॉस्फरस",
+    "potassium": "पोटॅशियम",
+    "temperature": "तापमान",
+    "humidity": "आर्द्रता",
+    "ph_value": "pH मूल्य",
+    "rainfall": "पावसाचे प्रमाण",
+    "required_field": "हे फील्ड आवश्यक आहे",
+    "get_recommendation": "शिफारस मिळवा",
+    "recommended_crop": "शिफारस केलेले पीक",
+    "recommendation_note": "हे पीक तुमच्या माती व हवामानासाठी योग्य आहे.",
+    "start_new_prediction": "नवीन अंदाज सुरू करा",
+
+    "crop": "पिक",
+    "area_in_hectares": "क्षेत्रफळ (हेक्टरमध्ये)",
+    "season": "हंगाम",
+    "wage_type": "मजुरी प्रकार",
+    "calculate_labor_cost": "कामगार खर्च मोजा",
+    "estimation_results": "अंदाज परिणाम",
+    "area": "क्षेत्रफळ",
+    "labor_required": "आवश्यक कामगार",
+    "cost_per_hectare": "प्रति हेक्टर खर्च",
+    "total_cost": "एकूण खर्च",
+    "workers": "कामगार",
+
+    "labor_estimation": "श्रम अनुमान"
+
 }

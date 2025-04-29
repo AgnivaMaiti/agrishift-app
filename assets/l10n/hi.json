@@ -61,5 +61,36 @@
     "price": "मूल्य",
     "seller": "विक्रेता",
     "contact_seller": "विक्रेता से संपर्क करें",
-    "buy_now": "अभी खरीदें"
+    "buy_now": "अभी खरीदें",
+
+
+    "crop_recommendation_tool": "फसल सिफारिश उपकरण",
+    "enter_soil_climate_data": "फसल सिफारिश के लिए मिट्टी और जलवायु डेटा दर्ज करें",
+    "nitrogen": "नाइट्रोजन",
+    "phosphorus": "फॉस्फोरस",
+    "potassium": "पोटैशियम",
+    "temperature": "तापमान",
+    "humidity": "आर्द्रता",
+    "ph_value": "pH मान",
+    "rainfall": "वर्षा",
+    "required_field": "यह फ़ील्ड आवश्यक है",
+    "get_recommendation": "सिफारिश प्राप्त करें",
+    "recommended_crop": "अनुशंसित फसल",
+    "recommendation_note": "यह आपके इनपुट स्थितियों के लिए सबसे उपयुक्त फसल है।",
+    "start_new_prediction": "नई भविष्यवाणी शुरू करें",
+
+    "crop": "फसल",
+    "area_in_hectares": "क्षेत्रफल (हेक्टेयर में)",
+    "season": "मौसम",
+    "wage_type": "मजदूरी प्रकार",
+    "calculate_labor_cost": "श्रम लागत गणना करें",
+    "estimation_results": "अनुमान परिणाम",
+    "area": "क्षेत्रफल",
+    "labor_required": "आवश्यक श्रमिक",
+    "cost_per_hectare": "प्रति हेक्टेयर लागत",
+    "total_cost": "कुल लागत",
+    "workers": "श्रमिक",
+
+    "labor_estimation": "श्रम अनुमान"
+
   }

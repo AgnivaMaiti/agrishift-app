@@ -1,7 +1,8 @@
 import 'package:agri/Providers/language_provider.dart';
-import 'package:agri/pages/commodities.dart';
 import 'package:agri/pages/field_card.dart';
 import 'package:agri/pages/weather.dart';
+import 'package:agri/widgets/crop_recommendation_widget.dart'; // Import the widget
+import 'package:agri/widgets/labor_estimation_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,41 +30,51 @@ class CropRecommendationScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    languageProvider.translate('crop_recommendations'),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  languageProvider.translate('crop_recommendations'),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: h * 0.02),
-                  CommoditiesGrid(),
-                  SizedBox(height: h * 0.02),
-                  Text(
-                    languageProvider.translate('my_fields'),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                SizedBox(height: h * 0.02),
+                // Replace CommoditiesGrid with CropRecommendationWidget
+                CropRecommendationWidget(),
+                SizedBox(height: h * 0.02),
+                Text(
+                  languageProvider.translate('my_fields'),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: h * 0.02),
-                  FieldCard(),
-                  SizedBox(height: h * 0.02),
-                  Text(
-                    languageProvider.translate('recommended_actions'),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                SizedBox(height: h * 0.02),
+                FieldCard(),
+                SizedBox(height: h * 0.02),
+                Text(
+                  languageProvider.translate('recommended_actions'),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: h * 0.02),
-                  _buildRecommendedActions(context),
-                ],
-              ),
+                ),
+                SizedBox(height: h * 0.02),
+                _buildRecommendedActions(context),
+                SizedBox(height: h * 0.02),
+                // Labor estimation section remains unchanged
+                Text(
+                  languageProvider.translate('labor_estimation'),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: h * 0.02),
+                LaborEstimationWidget(),
+              ],
             ),
           ),
         ],
@@ -119,7 +130,7 @@ class CropRecommendationScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF4D7C0F).withAlpha(1),
+                    color: Color.fromRGBO(77, 124, 15, 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
