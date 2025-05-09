@@ -2,9 +2,11 @@ import 'package:agro/Providers/language_provider.dart';
 import 'package:agro/Providers/navigationprovider.dart';
 import 'package:agro/splash.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-void main() async {
+Future<void> main() async {
+  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
   final languageProvider = LanguageProvider();
   await languageProvider.loadLanguage('en');
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       locale: languageProvider.locale,
       theme: ThemeData(
+        primaryColor: Color(0xff01342C),
+
         fontFamily: 'Poppins',
         textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
       ),

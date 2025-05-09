@@ -7,7 +7,7 @@ class LaborEstimationWidget extends StatefulWidget {
   const LaborEstimationWidget({super.key});
 
   @override
-  _LaborEstimationWidgetState createState() => _LaborEstimationWidgetState();
+  State<LaborEstimationWidget> createState() => _LaborEstimationWidgetState();
 }
 
 class _LaborEstimationWidgetState extends State<LaborEstimationWidget> {
@@ -33,7 +33,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget> {
     'Corn',
     'Chickpea',
     'Apple',
-    'Banana'
+    'Banana',
   ];
   final List<String> _seasonOptions = ['Spring', 'Summer', 'Fall', 'Winter'];
   final List<String> _wageTypeOptions = ['Govt', 'Expected'];
@@ -55,13 +55,14 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget> {
 
     try {
       final result = await _estimationService.estimateCost(
-          _selectedCrop,
-          _selectedCropType,
-          _area,
-          _selectedWageType,
-          _selectedSeason,
-          _govtWage,
-          _expectedWage);
+        _selectedCrop,
+        _selectedCropType,
+        _area,
+        _selectedWageType,
+        _selectedSeason,
+        _govtWage,
+        _expectedWage,
+      );
 
       setState(() {
         _estimationResult = result;
@@ -72,54 +73,65 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error calculating estimation: $e')));
+        SnackBar(content: Text('Error calculating estimation: $e')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
-
+    final double h = MediaQuery.of(context).size.height;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+        color: Color(0xff01342C),
       ),
       padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Crop selection
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              labelText: languageProvider.translate('crop'),
-              border: OutlineInputBorder(),
-            ),
-            value: _selectedCrop,
-            items: _cropOptions.map((String crop) {
-              return DropdownMenuItem<String>(
-                value: crop,
-                child: Text(crop),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
+          buildDropDown(
+            languageProvider,
+            _selectedCrop,
+            _cropOptions,
+            (String? newValue) {
               if (newValue != null) {
                 setState(() {
                   _selectedCrop = newValue;
-                  _selectedCropType =
-                      _estimationService.getCropTypeForCrop(newValue);
+                  _selectedCropType = _estimationService.getCropTypeForCrop(
+                    newValue,
+                  );
                 });
               }
             },
+            languageProvider.translate('crop'),
           ),
-          SizedBox(height: 12),
 
-          // Area input
+          SizedBox(height: h * 0.02),
           TextFormField(
+            style: TextStyle(color: Colors.white),
+            cursorColor: Colors.white,
             decoration: InputDecoration(
               labelText: languageProvider.translate('area_in_hectares'),
-              border: OutlineInputBorder(),
+              labelStyle: TextStyle(color: Colors.white),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 2),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 2),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red, width: 2),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red, width: 2),
+              ),
               suffixText: 'ha',
+              suffixStyle: TextStyle(color: Colors.white),
             ),
             keyboardType: TextInputType.number,
             initialValue: _area.toString(),
@@ -129,97 +141,81 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget> {
               });
             },
           ),
-          SizedBox(height: 12),
-
-          // Season selection
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              labelText: languageProvider.translate('season'),
-              border: OutlineInputBorder(),
-            ),
-            value: _selectedSeason,
-            items: _seasonOptions.map((String season) {
-              return DropdownMenuItem<String>(
-                value: season,
-                child: Text(season),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
+          SizedBox(height: h * 0.02),
+          buildDropDown(
+            languageProvider,
+            _selectedSeason,
+            _seasonOptions,
+            (String? newValue) {
               if (newValue != null) {
                 setState(() {
                   _selectedSeason = newValue;
                 });
               }
             },
+            languageProvider.translate('season'),
           ),
-          SizedBox(height: 12),
 
-          // Wage type selection
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              labelText: languageProvider.translate('wage_type'),
-              border: OutlineInputBorder(),
-            ),
-            value: _selectedWageType,
-            items: _wageTypeOptions.map((String wageType) {
-              return DropdownMenuItem<String>(
-                value: wageType,
-                child: Text(wageType),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
+          SizedBox(height: h * 0.02),
+          buildDropDown(
+            languageProvider,
+            _selectedWageType,
+            _wageTypeOptions,
+            (String? newValue) {
               if (newValue != null) {
                 setState(() {
                   _selectedWageType = newValue;
                 });
               }
             },
+            languageProvider.translate('wage_type'),
           ),
-          SizedBox(height: 20),
 
-          // Calculate button
+          SizedBox(height: h * 0.02),
+
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: _isLoading ? null : _calculateEstimation,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF147b2c),
+                backgroundColor: Color(0xff4EBE44),
                 padding: EdgeInsets.symmetric(vertical: 12),
               ),
-              child: _isLoading
-                  ? SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
+              child:
+                  _isLoading
+                      ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                      : Text(
+                        languageProvider.translate('calculate_labor_cost'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    )
-                  : Text(
-                      languageProvider.translate('calculate_labor_cost'),
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: h * 0.02),
 
-          // Results section
           if (_estimationResult != null)
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     languageProvider.translate('estimation_results'),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   SizedBox(height: 8),
                   _buildResultRow(
@@ -282,5 +278,42 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget> {
   void dispose() {
     _estimationService.dispose();
     super.dispose();
+  }
+
+  Widget buildDropDown(
+    LanguageProvider langProvider,
+    String value,
+    List<String> items,
+    Function(String?)? onChanged,
+    String label,
+  ) {
+    return DropdownButtonFormField(
+      style: TextStyle(color: Colors.white),
+      iconEnabledColor: Colors.white,
+
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.white),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white, width: 2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+      ),
+      value: value,
+      items:
+          items.map((String season) {
+            return DropdownMenuItem(value: season, child: Text(season));
+          }).toList(),
+      onChanged: onChanged,
+      dropdownColor: Color(0xff01342C).withAlpha(230),
+    );
   }
 }

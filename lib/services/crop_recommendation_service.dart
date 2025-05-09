@@ -11,7 +11,7 @@ class CropRecommendationService {
 
   CropRecommendationService._internal();
 
-  Interpreter? _interpreter; // Make it nullable
+  Interpreter? _interpreter;
   bool _modelLoaded = false;
 
   // Keep the mapping from model output indices to crop names

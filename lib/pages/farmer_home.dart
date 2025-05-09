@@ -1,7 +1,8 @@
 import 'package:agro/Providers/language_provider.dart';
-import 'package:agro/pages/commodities.dart';
 import 'package:agro/pages/field_card.dart';
 import 'package:agro/services/weather.dart';
+import 'package:agro/widgets/crop_recommendation_widget.dart';
+import 'package:agro/widgets/labor_estimation_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -66,9 +67,9 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
             ],
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xffFFF8F0),
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(120),
+          preferredSize: Size.fromHeight(60),
           child: Container(
             padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
             decoration: BoxDecoration(color: Color(0xff01342C)),
@@ -89,28 +90,6 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                     ),
                   ],
                 ),
-                TextFormField(
-                  cursorColor: Colors.black,
-                  decoration: InputDecoration(
-                    filled: true,
-
-                    hintText: "Search",
-                    hintStyle: TextStyle(color: Color(0xff1C4F47)),
-                    prefixIcon: Icon(Icons.search, color: Color(0xff1C4F47)),
-                    suffixIcon: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.mic_outlined, color: Color(0xff1C4F47)),
-                    ),
-                    fillColor: Colors.white,
-
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -130,21 +109,26 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        color: Color(0xff01342C),
-                        border: Border.all(color: Color(0xff01342C), width: 2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: WeatherCard(),
                     ),
                   ],
                 ),
+                SizedBox(height: h * 0.02),
                 Text(
                   localizedStrings['crops_for_you'] ?? "Crops for you",
                   style: TextStyle(fontSize: 22, color: Color(0xff01342C)),
                 ),
+                CropRecommendationWidget(),
                 SizedBox(height: h * 0.02),
-                CommoditiesGrid(),
+                Text(
+                  languageProvider.translate('labour_estimation'),
+                  style: TextStyle(fontSize: 22, color: Color(0xff01342C)),
+                ),
+                LaborEstimationWidget(),
                 SizedBox(height: h * 0.02),
+
                 Text(
                   languageProvider.translate('my_fields'),
                   style: TextStyle(fontSize: 22, color: Color(0xff01342C)),
@@ -152,12 +136,6 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                 SizedBox(height: h * 0.02),
                 FieldCard(),
                 SizedBox(height: h * 0.02),
-                Text(
-                  languageProvider.translate('recommended_actions'),
-                  style: TextStyle(fontSize: 18, color: Color(0xff01342C)),
-                ),
-                SizedBox(height: h * 0.02),
-                _buildRecommendedActions(context),
               ],
             ),
           ),
@@ -198,61 +176,6 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                   },
                 );
               },
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildRecommendedActions(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: 3,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              // border: Border.all(color: Colors.grey[300]!),
-              // borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                // Container(
-                //   padding: EdgeInsets.all(8),
-                //   decoration: BoxDecoration(
-                //     color: Color(0xFF4D7C0F).withAlpha(1),
-                //     borderRadius: BorderRadius.circular(8),
-                //   ),
-                //   child: Icon(
-                //     Icons.notifications_active,
-                //     color: Color(0xFF4D7C0F),
-                //   ),
-                // ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Action ${index + 1}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      // Text(
-                      //   'Description of recommended action for your crops',
-                      //   style: TextStyle(color: Colors.grey[600]),
-                      // ),
-                    ],
-                  ),
-                ),
-                // Icon(Icons.chevron_right),
-              ],
             ),
           ),
         );

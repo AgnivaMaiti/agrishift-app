@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:agro/Providers/language_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+String weatherApiKey = dotenv.env['WEATHER_API_KEY'] ?? '';
 
 class WeatherCard extends StatefulWidget {
   const WeatherCard({super.key});
@@ -20,7 +23,7 @@ class _WeatherCardState extends State<WeatherCard> {
   Map<String, dynamic>? weatherData;
   String location = 'Loading...';
 
-  final String apiKey = '2357a65411bb58b10fb88f6f0f317bf4';
+  final String apiKey = weatherApiKey;
 
   @override
   void initState() {
@@ -77,7 +80,6 @@ class _WeatherCardState extends State<WeatherCard> {
       Position position = await Geolocator.getCurrentPosition();
       fetchWeatherByCoordinates(position.latitude, position.longitude);
 
-      // Get location name from coordinates
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
@@ -91,7 +93,6 @@ class _WeatherCardState extends State<WeatherCard> {
             location = cityName;
           });
 
-          // Save location
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('weather_location', cityName);
         }
@@ -122,8 +123,6 @@ class _WeatherCardState extends State<WeatherCard> {
           weatherData = jsonDecode(response.body);
           location = weatherData?['name'] ?? city;
           isLoading = false;
-
-          // Save location
           _saveLocation(city);
         });
       } else {
@@ -180,128 +179,193 @@ class _WeatherCardState extends State<WeatherCard> {
 
   IconData _getWeatherIcon(String? iconCode) {
     if (iconCode == null) return Icons.cloud;
-
     switch (iconCode.substring(0, 2)) {
       case '01':
-        return Icons.wb_sunny; // clear sky
+        return Icons.wb_sunny;
       case '02':
-        return Icons.cloud; // few clouds - using cloud instead of partly_sunny
+        return Icons.cloud;
       case '03':
-        return Icons.cloud; // scattered clouds
+        return Icons.cloud;
       case '04':
-        return Icons.cloud_queue; // broken clouds
+        return Icons.cloud_queue;
       case '09':
         return Icons.grain;
       case '10':
-        return Icons.beach_access; // rain
+        return Icons.beach_access;
       case '11':
-        return Icons.flash_on; // thunderstorm
+        return Icons.flash_on;
       case '13':
-        return Icons.ac_unit; // snow
+        return Icons.ac_unit;
       case '50':
-        return Icons.blur_on; // mist
+        return Icons.blur_on;
       default:
         return Icons.cloud;
     }
   }
 
+  Color _getWeatherIconColor(String? iconCode) {
+    if (iconCode == null) return Colors.blueGrey;
+    switch (iconCode.substring(0, 2)) {
+      case '01':
+        return Colors.yellow[700]!;
+      case '02':
+      case '03':
+      case '04':
+        return Colors.blue[300]!;
+      case '09':
+      case '10':
+        return Colors.blue[600]!;
+      case '11':
+        return Colors.purple[400]!;
+      case '13':
+        return Colors.white;
+      case '50':
+        return Colors.grey[400]!;
+      default:
+        return Colors.blueGrey;
+    }
+  }
+
+  Color _getTemperatureColor(double? temp) {
+    if (temp == null) return Colors.white;
+    if (temp < 0) return Colors.blue[300]!;
+    if (temp < 15) return Colors.cyan[300]!;
+    if (temp < 25) return Colors.green[300]!;
+    if (temp < 30) return Colors.yellow[700]!;
+    return Colors.red[400]!;
+  }
+
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
+    final theme = Theme.of(context);
 
     return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.primaryColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
       child:
           isLoading
-              ? Center(child: CircularProgressIndicator(color: Colors.white))
+              ? const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              )
               : errorMessage.isNotEmpty
-              ?
-              // Error state
-              Center(
+              ? Center(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.error_outline, color: Colors.white, size: 30),
-                    SizedBox(height: 8),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 12),
                     Text(
                       errorMessage,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 8),
-                    ElevatedButton(
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
                       onPressed: _getCurrentLocation,
+                      icon: const Icon(Icons.refresh),
+                      label: Text(languageProvider.translate('retry')),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: Color(0xFF4D7C0F),
+                        foregroundColor: theme.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: Text(languageProvider.translate('retry')),
                     ),
                   ],
                 ),
               )
-              :
-              // Weather data state
-              Column(
+              : Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                location,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Text(
-                                '${weatherData?['main']?['temp']?.toStringAsFixed(1) ?? '0'}°',
-                                style: TextStyle(
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_on,
                                   color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
+                                  size: 20,
                                 ),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(
-                                _getWeatherIcon(
-                                  weatherData?['weather']?[0]?['icon'],
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    location,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                color: Colors.white,
-                                size: 32,
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Text(
+                                  '${weatherData?['main']?['temp']?.toStringAsFixed(1) ?? '0'}°',
+                                  style: TextStyle(
+                                    color: _getTemperatureColor(
+                                      weatherData?['main']?['temp'],
+                                    ),
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Icon(
+                                  _getWeatherIcon(
+                                    weatherData?['weather']?[0]?['icon'],
+                                  ),
+                                  color: _getWeatherIconColor(
+                                    weatherData?['weather']?[0]?['icon'],
+                                  ),
+                                  size: 40,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              (weatherData?['weather']?[0]?['description'] ??
+                                      '')
+                                  .toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
                               ),
-                            ],
-                          ),
-                          Text(
-                            weatherData?['weather']?[0]?['description'] ?? '',
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           _buildWeatherDetail(
+                            color: Colors.amber,
                             icon: Icons.thermostat,
                             value:
                                 '${weatherData?['main']?['feels_like']?.toStringAsFixed(1) ?? '0'}°C',
                             label: languageProvider.translate('feels_like'),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           _buildWeatherDetail(
+                            color: Colors.cyan,
                             icon: Icons.water_drop,
                             value:
                                 '${weatherData?['main']?['humidity'] ?? '0'}%',
@@ -311,48 +375,42 @@ class _WeatherCardState extends State<WeatherCard> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  const SizedBox(height: 20),
+                  Wrap(
+                    spacing: 20,
+                    runSpacing: 16,
+                    alignment: WrapAlignment.spaceBetween,
                     children: [
                       _buildWeatherDetail(
+                        color: Colors.lightBlue,
                         icon: Icons.air,
                         value: '${weatherData?['wind']?['speed'] ?? '0'} m/s',
                         label: languageProvider.translate('wind'),
                       ),
                       _buildWeatherDetail(
+                        color: Colors.indigo,
                         icon: Icons.compress,
                         value:
                             '${weatherData?['main']?['pressure'] ?? '0'} hPa',
                         label: languageProvider.translate('pressure'),
                       ),
-                      Column(
-                        children: [
-                          Text(
-                            _formatTime(weatherData?['sys']?['sunrise'] ?? 0),
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                          Text(
-                            languageProvider.translate('sunrise'),
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
+                      _buildWeatherDetail(
+                        color: Colors.orange,
+                        icon: Icons.wb_sunny,
+                        value: _formatTime(
+                          weatherData?['sys']?['sunrise'] ?? 0,
+                        ),
+                        label: languageProvider.translate('sunrise'),
                       ),
-                      Column(
-                        children: [
-                          Text(
-                            _formatTime(weatherData?['sys']?['sunset'] ?? 0),
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                          Text(
-                            languageProvider.translate('sunset'),
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
+                      _buildWeatherDetail(
+                        color: Colors.deepOrange,
+                        icon: Icons.nights_stay,
+                        value: _formatTime(weatherData?['sys']?['sunset'] ?? 0),
+                        label: languageProvider.translate('sunset'),
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 20),
                   _buildSearchBar(context),
                 ],
               ),
@@ -370,19 +428,31 @@ class _WeatherCardState extends State<WeatherCard> {
   }
 
   Widget _buildWeatherDetail({
+    required Color color,
     required IconData icon,
     required String value,
     required String label,
   }) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: Colors.white, size: 16),
-        SizedBox(width: 4),
+        Icon(icon, color: color, size: 24),
+        const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(value, style: TextStyle(color: Colors.white)),
-            Text(label, style: TextStyle(color: Colors.white70, fontSize: 12)),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+            ),
           ],
         ),
       ],
@@ -394,24 +464,26 @@ class _WeatherCardState extends State<WeatherCard> {
     final TextEditingController controller = TextEditingController();
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(30),
-        borderRadius: BorderRadius.circular(20),
+        color: const Color(0x33FFFFFF),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: const Color(0x4DFFFFFF)),
       ),
       child: Row(
         children: [
-          Icon(Icons.search, color: Colors.white, size: 16),
-          SizedBox(width: 8),
+          const Icon(Icons.search, color: Colors.white, size: 20),
+          const SizedBox(width: 12),
           Expanded(
             child: TextField(
+              cursorColor: Colors.white,
               controller: controller,
-              style: TextStyle(color: Colors.white, fontSize: 14),
+              style: const TextStyle(color: Colors.white, fontSize: 16),
               decoration: InputDecoration(
                 hintText: languageProvider.translate('search_location'),
-                hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
+                hintStyle: const TextStyle(color: Colors.white70, fontSize: 16),
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
               ),
               onSubmitted: (value) {
                 if (value.isNotEmpty) {
@@ -422,10 +494,10 @@ class _WeatherCardState extends State<WeatherCard> {
             ),
           ),
           IconButton(
-            icon: Icon(Icons.my_location, color: Colors.white, size: 16),
+            icon: const Icon(Icons.my_location, color: Colors.white, size: 20),
             onPressed: _getCurrentLocation,
             padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
+            constraints: const BoxConstraints(),
           ),
         ],
       ),

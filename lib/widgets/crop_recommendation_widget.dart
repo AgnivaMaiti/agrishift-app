@@ -110,8 +110,8 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
-
     return Card(
+      color: Color(0xff01342C),
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -120,11 +120,15 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
           children: [
             Text(
               languageProvider.translate('crop_recommendation_tool'),
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             SizedBox(height: 16),
             if (_isLoading)
-              Center(child: CircularProgressIndicator())
+              Center(child: CircularProgressIndicator(color: Color(0xff4EBE44)))
             else if (_errorMessage.isNotEmpty)
               _buildErrorWidget()
             else if (_hasRecommendation)
@@ -138,12 +142,13 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
   }
 
   Widget _buildErrorWidget() {
+    final double h = MediaQuery.of(context).size.height;
     return Container(
       padding: EdgeInsets.all(16),
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.red[50],
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.red[300]!),
       ),
       child: Column(
@@ -157,9 +162,9 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
               color: Colors.red[700],
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: h * 0.04),
           Text(_errorMessage),
-          SizedBox(height: 16),
+          SizedBox(height: h * 0.08),
           ElevatedButton(onPressed: _initializeService, child: Text('Retry')),
         ],
       ),
@@ -167,147 +172,134 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
   }
 
   Widget _buildInputForm(LanguageProvider languageProvider) {
+    final double h = MediaQuery.of(context).size.height;
     return Form(
       key: _formKey,
       child: Column(
         children: [
-          Text(languageProvider.translate('enter_soil_climate_data')),
-          SizedBox(height: 16),
-
-          // Nitrogen input
-          TextFormField(
-            controller: _nitrogenController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: '${languageProvider.translate('nitrogen')} (N)',
-              border: OutlineInputBorder(),
-              suffixText: 'kg/ha',
-            ),
-            validator: (value) {
+          Text(
+            languageProvider.translate('enter_soil_climate_data'),
+            style: TextStyle(color: Colors.white),
+          ),
+          SizedBox(height: h * 0.02),
+          buildTextField(
+            '${languageProvider.translate('nitrogen')} (N)',
+            _nitrogenController,
+            TextInputType.number,
+            languageProvider,
+            'kg/ha',
+            (value) {
               if (value == null || value.isEmpty) {
                 return languageProvider.translate('required_field');
               }
               return null;
             },
           ),
-          SizedBox(height: 8),
+          SizedBox(height: h * 0.015),
 
-          // Phosphorus input
-          TextFormField(
-            controller: _phosphorusController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: '${languageProvider.translate('phosphorus')} (P)',
-              border: OutlineInputBorder(),
-              suffixText: 'kg/ha',
-            ),
-            validator: (value) {
+          buildTextField(
+            '${languageProvider.translate('phosphorus')} (P)',
+            _phosphorusController,
+            TextInputType.number,
+            languageProvider,
+            'kg/ha',
+            (value) {
               if (value == null || value.isEmpty) {
                 return languageProvider.translate('required_field');
               }
               return null;
             },
           ),
-          SizedBox(height: 8),
-
-          // Potassium input
-          TextFormField(
-            controller: _potassiumController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: "languageProvider.translate('potassium') + ' (K)'",
-              border: OutlineInputBorder(),
-              suffixText: 'kg/ha',
-            ),
-            validator: (value) {
+          SizedBox(height: h * 0.015),
+          buildTextField(
+            "${languageProvider.translate('potassium')} (K)",
+            _potassiumController,
+            TextInputType.number,
+            languageProvider,
+            'kg/ha',
+            (value) {
               if (value == null || value.isEmpty) {
                 return languageProvider.translate('required_field');
               }
               return null;
             },
           ),
-          SizedBox(height: 8),
-
-          // Temperature input
-          TextFormField(
-            controller: _temperatureController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: languageProvider.translate('temperature'),
-              border: OutlineInputBorder(),
-              suffixText: '°C',
-            ),
-            validator: (value) {
+          SizedBox(height: h * 0.015),
+          buildTextField(
+            languageProvider.translate('temperature'),
+            _temperatureController,
+            TextInputType.number,
+            languageProvider,
+            '°C',
+            (value) {
               if (value == null || value.isEmpty) {
                 return languageProvider.translate('required_field');
               }
               return null;
             },
           ),
-          SizedBox(height: 8),
-
-          // Humidity input
-          TextFormField(
-            controller: _humidityController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: languageProvider.translate('humidity'),
-              border: OutlineInputBorder(),
-              suffixText: '%',
-            ),
-            validator: (value) {
+          SizedBox(height: h * 0.015),
+          buildTextField(
+            languageProvider.translate('humidity'),
+            _humidityController,
+            TextInputType.number,
+            languageProvider,
+            '%',
+            (value) {
               if (value == null || value.isEmpty) {
                 return languageProvider.translate('required_field');
               }
               return null;
             },
           ),
-          SizedBox(height: 8),
-
-          // pH input
-          TextFormField(
-            controller: _phController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: languageProvider.translate('ph_value'),
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
+          SizedBox(height: h * 0.015),
+          buildTextField(
+            languageProvider.translate('ph_value'),
+            _phController,
+            TextInputType.number,
+            languageProvider,
+            '',
+            (value) {
               if (value == null || value.isEmpty) {
                 return languageProvider.translate('required_field');
               }
               return null;
             },
           ),
-          SizedBox(height: 8),
-
-          // Rainfall input
-          TextFormField(
-            controller: _rainfallController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: languageProvider.translate('rainfall'),
-              border: OutlineInputBorder(),
-              suffixText: 'mm',
-            ),
-            validator: (value) {
+          SizedBox(height: h * 0.015),
+          buildTextField(
+            languageProvider.translate('rainfall'),
+            _rainfallController,
+            TextInputType.number,
+            languageProvider,
+            "mm",
+            (value) {
               if (value == null || value.isEmpty) {
                 return languageProvider.translate('required_field');
               }
               return null;
             },
           ),
-          SizedBox(height: 16),
 
-          ElevatedButton(
-            onPressed: _predictCrop,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF147b2c),
-              minimumSize: Size(double.infinity, 50),
-            ),
-            child: Text(
-              languageProvider.translate('get_recommendation'),
-              style: TextStyle(color: Colors.white),
+          SizedBox(height: h * 0.02),
+          InkWell(
+            onTap: _predictCrop,
+            child: Container(
+              height: h * 0.07,
+              decoration: BoxDecoration(
+                color: Color(0xff4EBE44),
+                borderRadius: BorderRadius.circular(h * 0.035),
+              ),
+              child: Center(
+                child: Text(
+                  languageProvider.translate('get_recommendation'),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -315,22 +307,58 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
     );
   }
 
+  Widget buildTextField(
+    String label,
+    TextEditingController controller,
+    TextInputType type,
+    LanguageProvider languageProvider,
+    String? suffixText,
+    String? Function(String?)? validator,
+  ) {
+    return TextFormField(
+      style: TextStyle(color: Colors.white),
+      cursorColor: Colors.white,
+      controller: controller,
+      keyboardType: type,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.white),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white, width: 2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+        suffixText: suffixText,
+        suffixStyle: TextStyle(color: Colors.white),
+      ),
+      validator: validator,
+    );
+  }
+
   Widget _buildRecommendationResult(LanguageProvider languageProvider) {
+    final double h = MediaQuery.of(context).size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${languageProvider.translate('recommended_crop')}:',
-          style: TextStyle(fontSize: 16),
+          '${languageProvider.translate('recommended_crop')} :',
+          style: TextStyle(fontSize: 16, color: Colors.white),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: h * 0.02),
         Container(
           padding: EdgeInsets.all(16),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Color(0xFF147b2c).withOpacity(0.1),
+            color: Color(0xFFFFF8F0),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Color(0xFF147b2c).withOpacity(0.3)),
+            border: Border.all(color: Color(0xFF147b2c)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,7 +379,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
             ],
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: h * 0.02),
         ElevatedButton(
           onPressed: () {
             setState(() {
