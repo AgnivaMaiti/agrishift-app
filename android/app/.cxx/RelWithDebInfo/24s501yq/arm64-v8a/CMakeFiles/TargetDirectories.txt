@@ -1,0 +1,2 @@
+C:/Users/KIIT/Documents/GitHub/agrishift-app/android/app/.cxx/RelWithDebInfo/24s501yq/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/KIIT/Documents/GitHub/agrishift-app/android/app/.cxx/RelWithDebInfo/24s501yq/arm64-v8a/CMakeFiles/rebuild_cache.dir
