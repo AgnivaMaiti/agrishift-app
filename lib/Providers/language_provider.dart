@@ -13,8 +13,6 @@ class LanguageProvider extends ChangeNotifier {
     'en': 'English',
     'hi': 'हिंदी',
     'mr': 'मराठी',
-    'bn': 'বাংলা',
-    'or': 'ଓଡ଼ିଆ',
   };
 
   Locale get locale => _locale;

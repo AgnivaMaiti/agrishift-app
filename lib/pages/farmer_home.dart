@@ -3,6 +3,7 @@ import 'package:agro/pages/field_card.dart';
 import 'package:agro/services/weather.dart';
 import 'package:agro/widgets/crop_recommendation_widget.dart';
 import 'package:agro/widgets/labor_estimation_widget.dart';
+import 'package:agro/widgets/news_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -127,6 +128,13 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                   style: TextStyle(fontSize: 22, color: Color(0xff01342C)),
                 ),
                 LaborEstimationWidget(),
+                SizedBox(height: h * 0.02),
+
+                Text(
+                  languageProvider.translate('agriculture_news') ?? "Agriculture News",
+                  style: TextStyle(fontSize: 22, color: Color(0xff01342C)),
+                ),
+                NewsWidget(),
                 SizedBox(height: h * 0.02),
 
                 Text(

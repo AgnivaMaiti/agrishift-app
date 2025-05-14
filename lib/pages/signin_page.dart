@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'signup_page.dart';
 import 'farmer_home.dart';
+import 'package:agro/pages/farmer_main.dart';
 
 class SignIn extends StatefulWidget {
   final String userType;
@@ -31,7 +32,7 @@ class _SignInState extends State<SignIn> {
     if (_formKey.currentState!.validate()) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => FarmerHome()),
+        MaterialPageRoute(builder: (context) => MainScreen()),
       );
     }
   }
@@ -58,7 +59,7 @@ class _SignInState extends State<SignIn> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    SlideTransitionRoute(page: FarmerHome()),
+                    SlideTransitionRoute(page: MainScreen()),
                   );
                 },
                 child: Text("Skip", style: TextStyle(color: Colors.white)),
