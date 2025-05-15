@@ -26,7 +26,6 @@ class AboutUsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header image
             Container(
               height: 200,
               width: double.infinity,
@@ -58,7 +57,6 @@ class AboutUsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // About section
                   SectionTitle(title: 'About Agrovigya'),
                   SizedBox(height: 16),
                   Text(
@@ -87,11 +85,10 @@ class AboutUsScreen extends StatelessWidget {
 
                   SizedBox(height: 32),
 
-                  // Vision section
                   SectionTitle(title: 'Our Vision'),
                   SizedBox(height: 16),
                   Text(
-                    'At Agrovigya, we envision a future where agriculture thrives through modernization, rural employment is optimized, and individuals have access to the skills and opportunities necessary for economic growth. Our goal is to create a sustainable ecosystem where farmers maximize productivity through data-driven insights, job seekers find meaningful employment beyond agriculture, and skill development bridges the gap between industry needs and workforce capabilities.',
+                    'At Agrovigya, we envision a future where India\'s agricultural sector is transformed through technology, creating a thriving ecosystem where farmers, laborers, and rural communities prosper together.',
                     style: TextStyle(
                       fontSize: 16,
                       height: 1.5,
@@ -99,20 +96,7 @@ class AboutUsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'By integrating technology, innovation, and government support, we strive to empower rural communities, reduce disguised unemployment, and foster a resilient agricultural economy that is both profitable and future-ready.',
-                    style: TextStyle(
-                      fontSize: 16,
-                      height: 1.5,
-                    ),
-                  ),
-
-                  SizedBox(height: 32),
-
-                  // Mission section
-                  SectionTitle(title: 'Our Mission'),
-                  SizedBox(height: 16),
-                  Text(
-                    'Our mission is to empower farmers with smarter agricultural practices, connect job seekers with meaningful employment opportunities, and bridge skill gaps through targeted upskilling programs. By integrating government schemes, financial support, and industry-driven training, we aim to enhance productivity, increase incomes, and create a self-reliant rural economy.',
+                    'We aim to bridge the gap between agricultural needs and workforce availability, reducing disguised unemployment while ensuring optimal resource utilization.',
                     style: TextStyle(
                       fontSize: 16,
                       height: 1.5,
@@ -129,7 +113,6 @@ class AboutUsScreen extends StatelessWidget {
 
                   SizedBox(height: 40),
 
-                  // Meet our team button
                   Center(
                     child: ElevatedButton.icon(
                       onPressed: () {
@@ -159,7 +142,6 @@ class AboutUsScreen extends StatelessWidget {
 
                   SizedBox(height: 40),
 
-                  // Contact info
                   SectionTitle(title: languageProvider.translate('contact_us')),
                   SizedBox(height: 16),
                   ContactItem(

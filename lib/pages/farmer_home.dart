@@ -1,5 +1,7 @@
 import 'package:agro/Providers/language_provider.dart';
 import 'package:agro/pages/field_card.dart';
+import 'package:agro/pages/about_us.dart'; 
+import 'package:agro/pages/profile_page.dart'; 
 import 'package:agro/services/weather.dart';
 import 'package:agro/widgets/crop_recommendation_widget.dart';
 import 'package:agro/widgets/labor_estimation_widget.dart';
@@ -47,14 +49,30 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                   localizedStrings['profile'] ?? "Profile",
                   style: TextStyle(color: Colors.white),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context); // Close the drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 title: Text(
                   localizedStrings['about_us'] ?? "About Us",
                   style: TextStyle(color: Colors.white),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context); // Close the drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AboutUsScreen(),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 title: Text(
@@ -135,14 +153,6 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                   style: TextStyle(fontSize: 22, color: Color(0xff01342C)),
                 ),
                 NewsWidget(),
-                SizedBox(height: h * 0.02),
-
-                Text(
-                  languageProvider.translate('my_fields'),
-                  style: TextStyle(fontSize: 22, color: Color(0xff01342C)),
-                ),
-                SizedBox(height: h * 0.02),
-                FieldCard(),
                 SizedBox(height: h * 0.02),
               ],
             ),
