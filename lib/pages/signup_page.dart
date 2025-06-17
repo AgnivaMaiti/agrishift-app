@@ -1,4 +1,4 @@
-import 'package:agro/Providers/language_provider.dart';
+import 'package:agro/providers/language_provider.dart';
 import 'package:agro/pages/farmer_main.dart';
 import 'package:agro/pages/signin_page.dart';
 import 'package:agro/utils/transitions.dart';
@@ -55,9 +55,8 @@ class _SignUpState extends State<SignUp> {
       },
       child: Scaffold(
         backgroundColor: const Color(0xff01342C),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+        body: SafeArea(
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -77,7 +76,6 @@ class _SignUpState extends State<SignUp> {
                     'Sign Up',
                     textAlign: TextAlign.start,
                     style: TextStyle(
-                      fontFamily: "Lato",
                       fontSize: MediaQuery.of(context).size.width * 0.05,
                       color: Colors.white,
                     ),

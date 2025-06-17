@@ -1,4 +1,4 @@
-import 'package:agro/Providers/language_provider.dart';
+import 'package:agro/providers/language_provider.dart';
 import 'package:agro/services/crop_recommendation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

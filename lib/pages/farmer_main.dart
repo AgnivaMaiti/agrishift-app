@@ -1,4 +1,4 @@
-import 'package:agro/Providers/navigationprovider.dart';
+import 'package:agro/providers/navprovider.dart';
 import 'package:agro/utils/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

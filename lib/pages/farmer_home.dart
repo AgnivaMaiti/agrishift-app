@@ -1,6 +1,9 @@
-import 'package:agro/Providers/language_provider.dart';
+import 'package:agro/pages/about_us.dart';
+import 'package:agro/pages/news.dart';
+import 'package:agro/providers/language_provider.dart';
 import 'package:agro/pages/field_card.dart';
 import 'package:agro/services/weather.dart';
+import 'package:agro/utils/transitions.dart';
 import 'package:agro/widgets/crop_recommendation_widget.dart';
 import 'package:agro/widgets/labor_estimation_widget.dart';
 import 'package:flutter/material.dart';
@@ -27,44 +30,51 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
       },
       child: Scaffold(
         key: _scaffoldKey,
-        endDrawer: Drawer(
-          backgroundColor: Color(0xff01342C),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    Navigator.of(context).pop();
+        endDrawer: SafeArea(
+          child: Drawer(
+            backgroundColor: Color(0xff01342C),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+                ListTile(
+                  title: Text(
+                    localizedStrings['profile'] ?? "Profile",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text(
+                    localizedStrings['about_us'] ?? "About Us",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      SlideTransitionRoute(page: AboutUsScreen()),
+                    );
                   },
                 ),
-              ),
-              ListTile(
-                title: Text(
-                  localizedStrings['profile'] ?? "Profile",
-                  style: TextStyle(color: Colors.white),
+                ListTile(
+                  title: Text(
+                    localizedStrings['change lang'] ?? "Change Language",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    _showLanguageDialog(context);
+                  },
                 ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text(
-                  localizedStrings['about_us'] ?? "About Us",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text(
-                  localizedStrings['change lang'] ?? "Change Language",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  _showLanguageDialog(context);
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         backgroundColor: Color(0xffFFF8F0),
@@ -79,14 +89,24 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                   children: [
                     Text(
                       localizedStrings['hello farmer'] ?? "Hello Farmer",
-                      style: TextStyle(color: Colors.white, fontSize: 25),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Spacer(),
-                    IconButton(
-                      onPressed: () {
-                        _scaffoldKey.currentState!.openEndDrawer();
-                      },
-                      icon: Icon(Icons.menu, color: Colors.white),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFF4EBE44).withAlpha(53),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          _scaffoldKey.currentState?.openEndDrawer();
+                        },
+                        icon: const Icon(Icons.menu, color: Color(0xFFFFF8F0)),
+                      ),
                     ),
                   ],
                 ),
@@ -136,6 +156,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                 SizedBox(height: h * 0.02),
                 FieldCard(),
                 SizedBox(height: h * 0.02),
+                NewsWidget(),
               ],
             ),
           ),

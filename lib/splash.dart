@@ -18,6 +18,7 @@ class _SplashState extends State<Splash> {
 
   void _navigateNext() async {
     await Future.delayed(const Duration(seconds: 5));
+    if (!mounted) return;
     Navigator.push(
       context,
       PageRouteBuilder(

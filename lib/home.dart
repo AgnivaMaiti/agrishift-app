@@ -1,7 +1,8 @@
-import 'package:agro/Providers/language_provider.dart';
+import 'package:agro/providers/language_provider.dart';
 import 'package:agro/pages/signin_page.dart';
 import 'package:agro/utils/transitions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -77,73 +78,82 @@ class _HomeState extends State<Home> {
     final double w = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Color(0xff01342C),
-      body: Column(
-        children: [
-          SizedBox(height: h * 0.36),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    SlideTransitionRoute(page: SignIn(userType: "Farmer")),
-                  );
-                },
-                child: Column(
-                  children: [
-                    Image(image: AssetImage("assets/images/farmer.png")),
-                    SizedBox(height: h * 0.02),
-                    Container(
-                      height: h * 0.05,
-                      width: w * 0.4,
-                      decoration: BoxDecoration(
-                        color: Color(0xff4EBE44),
-                        borderRadius: BorderRadius.circular(10),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      SlideTransitionRoute(page: SignIn(userType: "Farmer")),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/images/farmer.svg",
+                        width: w * 0.4,
                       ),
-                      child: Center(
-                        child: Text(
-                          localizedStrings['farmer'] ?? 'Farmer',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: h * 0.024,
+                      SizedBox(height: h * 0.02),
+                      Container(
+                        height: h * 0.05,
+                        width: w * 0.4,
+                        decoration: BoxDecoration(
+                          color: Color(0xff4EBE44),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            localizedStrings['farmer'] ?? 'Farmer',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: h * 0.024,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(width: w * 0.1),
-              InkWell(
-                child: Column(
-                  children: [
-                    Container(
-                      height: h * 0.05,
-                      width: w * 0.4,
-                      decoration: BoxDecoration(
-                        color: Color(0xff4EBE44),
-                        borderRadius: BorderRadius.circular(10),
+                SizedBox(width: w * 0.1),
+                InkWell(
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/images/employer.svg",
+                        width: w * 0.4,
                       ),
-                      child: Center(
-                        child: Text(
-                          localizedStrings['employer'] ?? 'Employer',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: h * 0.024,
+                      Container(
+                        height: h * 0.05,
+                        width: w * 0.4,
+                        decoration: BoxDecoration(
+                          color: Color(0xff4EBE44),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            localizedStrings['employer'] ?? 'Employer',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: h * 0.024,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
