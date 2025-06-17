@@ -35,14 +35,18 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffFFF8F0),
-      body: Center(
-        child: CircleAvatar(
-          radius: MediaQuery.of(context).size.height * 0.15,
-          backgroundColor: Color(0xff01342C),
-          child: SvgPicture.asset(
-            'assets/images/logo.svg',
-            height: 150,
-            width: 150,
+      body: SafeArea(
+        child: Center(
+          child: CircleAvatar(
+            radius: MediaQuery.of(context).size.height * 0.15,
+            backgroundColor: Color(0xff01342C),
+            child: LayoutBuilder(
+              builder:
+                  (context, constraints) => SvgPicture.asset(
+                    'assets/images/logo.svg',
+                    width: constraints.maxWidth * 0.8,
+                  ),
+            ),
           ),
         ),
       ),

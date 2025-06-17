@@ -11,7 +11,8 @@ class CropRecommendationWidget extends StatefulWidget {
       _CropRecommendationWidgetState();
 }
 
-class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
+class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _nitrogenController = TextEditingController();
   final _phosphorusController = TextEditingController();
@@ -26,10 +27,19 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
   bool _isLoading = false;
   bool _hasRecommendation = false;
   String _errorMessage = '';
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     _initializeService();
   }
 
@@ -43,6 +53,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
       setState(() {
         _isLoading = false;
       });
+      _animationController.forward();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -88,9 +99,22 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
         _isLoading = false;
         _errorMessage = 'Error predicting crop: $e';
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(_errorMessage)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(child: Text(_errorMessage)),
+            ],
+          ),
+          backgroundColor: Colors.red[600],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
     }
   }
 
@@ -103,6 +127,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
     _humidityController.dispose();
     _phController.dispose();
     _rainfallController.dispose();
+    _animationController.dispose();
     _service.dispose();
     super.dispose();
   }
@@ -110,31 +135,132 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
-    return Card(
-      color: Color(0xff01342C),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              languageProvider.translate('crop_recommendation_tool'),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xff01342C), Color(0xff0a4a3e), Color(0xff147b5a)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 20,
+            offset: Offset(0, 8),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Section
+          Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
             ),
-            SizedBox(height: 16),
-            if (_isLoading)
-              Center(child: CircularProgressIndicator(color: Color(0xff4EBE44)))
-            else if (_errorMessage.isNotEmpty)
-              _buildErrorWidget()
-            else if (_hasRecommendation)
-              _buildRecommendationResult(languageProvider)
-            else
-              _buildInputForm(languageProvider),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Color(0xff4EBE44),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xff4EBE44).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Icon(Icons.agriculture, color: Colors.white, size: 24),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        languageProvider.translate('crop_recommendation_tool'),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'AI-powered crop selection',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Content Section
+          Padding(
+            padding: EdgeInsets.all(20),
+            child:
+                _isLoading
+                    ? _buildLoadingWidget()
+                    : _errorMessage.isNotEmpty
+                    ? _buildErrorWidget()
+                    : _hasRecommendation
+                    ? _buildRecommendationResult(languageProvider)
+                    : FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: _buildInputForm(languageProvider),
+                    ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return Container(
+      height: 150,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(
+                    color: Color(0xff4EBE44),
+                    strokeWidth: 4,
+                  ),
+                ),
+                Icon(Icons.eco, color: Color(0xff4EBE44), size: 28),
+              ],
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Analyzing soil conditions...',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.8),
+                fontSize: 16,
+              ),
+            ),
           ],
         ),
       ),
@@ -142,161 +268,212 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
   }
 
   Widget _buildErrorWidget() {
-    final double h = MediaQuery.of(context).size.height;
     return Container(
-      padding: EdgeInsets.all(16),
-      width: double.infinity,
+      padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.red[50],
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.red[300]!),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.red[200]!, width: 1),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Icon(Icons.error_outline, color: Colors.red[600], size: 48),
+          SizedBox(height: 16),
           Text(
-            'Error Loading Model',
+            'Model Loading Failed',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.red[700],
             ),
           ),
-          SizedBox(height: h * 0.04),
-          Text(_errorMessage),
-          SizedBox(height: h * 0.08),
-          ElevatedButton(onPressed: _initializeService, child: Text('Retry')),
+          SizedBox(height: 8),
+          Text(
+            _errorMessage,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.red[600], fontSize: 14),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: _initializeService,
+            icon: Icon(Icons.refresh, size: 18),
+            label: Text('Retry'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red[600],
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildInputForm(LanguageProvider languageProvider) {
-    final double h = MediaQuery.of(context).size.height;
     return Form(
       key: _formKey,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            languageProvider.translate('enter_soil_climate_data'),
-            style: TextStyle(color: Colors.white),
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: Colors.white.withOpacity(0.8),
+                  size: 20,
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    languageProvider.translate('enter_soil_climate_data'),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: h * 0.02),
-          buildTextField(
-            '${languageProvider.translate('nitrogen')} (N)',
-            _nitrogenController,
-            TextInputType.number,
-            languageProvider,
-            'kg/ha',
-            (value) {
-              if (value == null || value.isEmpty) {
-                return languageProvider.translate('required_field');
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: h * 0.015),
+          SizedBox(height: 24),
 
-          buildTextField(
-            '${languageProvider.translate('phosphorus')} (P)',
-            _phosphorusController,
-            TextInputType.number,
-            languageProvider,
-            'kg/ha',
-            (value) {
-              if (value == null || value.isEmpty) {
-                return languageProvider.translate('required_field');
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: h * 0.015),
-          buildTextField(
-            "${languageProvider.translate('potassium')} (K)",
-            _potassiumController,
-            TextInputType.number,
-            languageProvider,
-            'kg/ha',
-            (value) {
-              if (value == null || value.isEmpty) {
-                return languageProvider.translate('required_field');
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: h * 0.015),
-          buildTextField(
-            languageProvider.translate('temperature'),
-            _temperatureController,
-            TextInputType.number,
-            languageProvider,
-            '°C',
-            (value) {
-              if (value == null || value.isEmpty) {
-                return languageProvider.translate('required_field');
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: h * 0.015),
-          buildTextField(
-            languageProvider.translate('humidity'),
-            _humidityController,
-            TextInputType.number,
-            languageProvider,
-            '%',
-            (value) {
-              if (value == null || value.isEmpty) {
-                return languageProvider.translate('required_field');
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: h * 0.015),
-          buildTextField(
-            languageProvider.translate('ph_value'),
-            _phController,
-            TextInputType.number,
-            languageProvider,
-            '',
-            (value) {
-              if (value == null || value.isEmpty) {
-                return languageProvider.translate('required_field');
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: h * 0.015),
-          buildTextField(
-            languageProvider.translate('rainfall'),
-            _rainfallController,
-            TextInputType.number,
-            languageProvider,
-            "mm",
-            (value) {
-              if (value == null || value.isEmpty) {
-                return languageProvider.translate('required_field');
-              }
-              return null;
-            },
-          ),
-
-          SizedBox(height: h * 0.02),
-          InkWell(
-            onTap: _predictCrop,
-            child: Container(
-              height: h * 0.07,
-              decoration: BoxDecoration(
-                color: Color(0xff4EBE44),
-                borderRadius: BorderRadius.circular(h * 0.035),
+          // Soil Nutrients Section
+          _buildSectionHeader('Soil Nutrients', Icons.scatter_plot),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildTextField(
+                  'Nitrogen (N)',
+                  _nitrogenController,
+                  'kg/ha',
+                  Icons.science,
+                  languageProvider,
+                ),
               ),
-              child: Center(
-                child: Text(
-                  languageProvider.translate('get_recommendation'),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+              SizedBox(width: 12),
+              Expanded(
+                child: _buildTextField(
+                  'Phosphorus (P)',
+                  _phosphorusController,
+                  'kg/ha',
+                  Icons.science,
+                  languageProvider,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildTextField(
+                  'Potassium (K)',
+                  _potassiumController,
+                  'kg/ha',
+                  Icons.science,
+                  languageProvider,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: _buildTextField(
+                  'pH Value',
+                  _phController,
+                  '',
+                  Icons.analytics,
+                  languageProvider,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 24),
+
+          // Climate Conditions Section
+          _buildSectionHeader('Climate Conditions', Icons.wb_sunny),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildTextField(
+                  'Temperature',
+                  _temperatureController,
+                  '°C',
+                  Icons.thermostat,
+                  languageProvider,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: _buildTextField(
+                  'Humidity',
+                  _humidityController,
+                  '%',
+                  Icons.water_drop,
+                  languageProvider,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          _buildTextField(
+            'Rainfall',
+            _rainfallController,
+            'mm',
+            Icons.cloud_queue,
+            languageProvider,
+          ),
+
+          SizedBox(height: 32),
+
+          // Predict Button
+          Container(
+            width: double.infinity,
+            height: 56,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff4EBE44), Color(0xff66d455)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xff4EBE44).withOpacity(0.4),
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: _predictCrop,
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.psychology, color: Colors.white, size: 20),
+                      SizedBox(width: 12),
+                      Text(
+                        languageProvider.translate('get_recommendation'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -307,100 +484,232 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget> {
     );
   }
 
-  Widget buildTextField(
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Color(0xff4EBE44), size: 20),
+        SizedBox(width: 8),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 1,
+            margin: EdgeInsets.only(left: 12),
+            color: Colors.white.withOpacity(0.3),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField(
     String label,
     TextEditingController controller,
-    TextInputType type,
+    String suffix,
+    IconData icon,
     LanguageProvider languageProvider,
-    String? suffixText,
-    String? Function(String?)? validator,
   ) {
-    return TextFormField(
-      style: TextStyle(color: Colors.white),
-      cursorColor: Colors.white,
-      controller: controller,
-      keyboardType: type,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: Colors.white),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white, width: 2),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
-        ),
-        suffixText: suffixText,
-        suffixStyle: TextStyle(color: Colors.white),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.3)),
       ),
-      validator: validator,
+      child: TextFormField(
+        controller: controller,
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
+        style: TextStyle(color: Colors.white, fontSize: 14),
+        cursorColor: Color(0xff4EBE44),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 13,
+          ),
+          prefixIcon: Icon(
+            icon,
+            color: Colors.white.withOpacity(0.7),
+            size: 18,
+          ),
+          suffixText: suffix,
+          suffixStyle: TextStyle(
+            color: Colors.white.withOpacity(0.7),
+            fontSize: 12,
+          ),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Required';
+          }
+          if (double.tryParse(value) == null) {
+            return 'Invalid number';
+          }
+          return null;
+        },
+      ),
     );
   }
 
   Widget _buildRecommendationResult(LanguageProvider languageProvider) {
-    final double h = MediaQuery.of(context).size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '${languageProvider.translate('recommended_crop')} :',
-          style: TextStyle(fontSize: 16, color: Colors.white),
-        ),
-        SizedBox(height: h * 0.02),
+        // Success Header
         Container(
           padding: EdgeInsets.all(16),
-          width: double.infinity,
           decoration: BoxDecoration(
-            color: Color(0xFFFFF8F0),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Color(0xFF147b2c)),
+            color: Colors.green[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.green[200]!),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Text(
-                _recommendedCrop.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF147b2c),
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green[600],
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                child: Icon(Icons.check_circle, color: Colors.white, size: 20),
               ),
-              SizedBox(height: 8),
-              Text(
-                languageProvider.translate('recommendation_note'),
-                style: TextStyle(fontStyle: FontStyle.italic),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Recommendation Ready!',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[800],
+                  ),
+                ),
               ),
             ],
           ),
         ),
-        SizedBox(height: h * 0.02),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _hasRecommendation = false;
-              _nitrogenController.clear();
-              _phosphorusController.clear();
-              _potassiumController.clear();
-              _temperatureController.clear();
-              _humidityController.clear();
-              _phController.clear();
-              _rainfallController.clear();
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[300],
-            minimumSize: Size(double.infinity, 50),
+
+        SizedBox(height: 20),
+
+        // Recommended Crop Card
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, Color(0xFFFFF8F0)],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Color(0xFF147b2c), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: Offset(0, 4),
+              ),
+            ],
           ),
-          child: Text(
-            languageProvider.translate('start_new_prediction'),
-            style: TextStyle(color: Colors.black87),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.agriculture, color: Color(0xFF147b2c), size: 24),
+                  SizedBox(width: 8),
+                  Text(
+                    'Recommended Crop',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Text(
+                _recommendedCrop.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF147b2c),
+                  letterSpacing: 1.2,
+                ),
+              ),
+              SizedBox(height: 12),
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Color(0xFF147b2c).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      color: Color(0xFF147b2c),
+                      size: 16,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        languageProvider.translate('recommendation_note'),
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 13,
+                          color: Color(0xFF147b2c),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
+        ),
+
+        SizedBox(height: 24),
+
+        // Action Buttons
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _hasRecommendation = false;
+                    _nitrogenController.clear();
+                    _phosphorusController.clear();
+                    _potassiumController.clear();
+                    _temperatureController.clear();
+                    _humidityController.clear();
+                    _phController.clear();
+                    _rainfallController.clear();
+                  });
+                },
+                icon: Icon(Icons.refresh, size: 18),
+                label: Text('New Prediction'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Color(0xFF147b2c),
+                  side: BorderSide(color: Color(0xFF147b2c)),
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
