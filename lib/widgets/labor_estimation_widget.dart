@@ -114,6 +114,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
       setState(() {
         _isLoading = false;
       });
+      if (!mounted) return;
       _showErrorSnackBar(context, 'Error calculating estimation: $e');
     }
   }
@@ -161,7 +162,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withAlpha(78),
                     blurRadius: 20,
                     offset: Offset(0, 10),
                   ),
@@ -201,7 +202,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
           Container(
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Color(0xff4EBE44).withOpacity(0.2),
+              color: Color(0xff4EBE44).withAlpha(51),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(Icons.agriculture, color: Color(0xff4EBE44), size: 32),
@@ -223,7 +224,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                 Text(
                   languageProvider.translate('calculate_farming_costs'),
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withAlpha(204),
                     fontSize: 14,
                   ),
                 ),
@@ -287,18 +288,18 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.white.withOpacity(0.1),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        color: Colors.white.withAlpha(26),
+        border: Border.all(color: Colors.white.withAlpha(78)),
       ),
       child: TextFormField(
         style: TextStyle(color: Colors.white, fontSize: 16),
         cursorColor: Color(0xff4EBE44),
         decoration: InputDecoration(
           labelText: languageProvider.translate('area_in_hectares'),
-          labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
+          labelStyle: TextStyle(color: Colors.white.withAlpha(204)),
           prefixIcon: Icon(Icons.crop_landscape, color: Color(0xff4EBE44)),
           suffixText: 'ha',
-          suffixStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
+          suffixStyle: TextStyle(color: Colors.white.withAlpha(204)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
@@ -347,13 +348,13 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                         color:
                             isSelected
                                 ? Color(0xff4EBE44)
-                                : Colors.white.withOpacity(0.1),
+                                : Colors.white.withAlpha(26),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color:
                               isSelected
                                   ? Color(0xff4EBE44)
-                                  : Colors.white.withOpacity(0.3),
+                                  : Colors.white.withAlpha(78),
                         ),
                       ),
                       child: Column(
@@ -381,7 +382,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                           Text(
                             '₹${option == 'Govt' ? _govtWage.toInt() : _expectedWage.toInt()}',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withAlpha(204),
                               fontSize: 12,
                             ),
                           ),
@@ -408,8 +409,8 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.white.withOpacity(0.1),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        color: Colors.white.withAlpha(26),
+        border: Border.all(color: Colors.white.withAlpha(78)),
       ),
       child: DropdownButtonFormField<String>(
         style: TextStyle(color: Colors.white, fontSize: 16),
@@ -417,7 +418,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
         dropdownColor: Color(0xff01342C),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
+          labelStyle: TextStyle(color: Colors.white.withAlpha(204)),
           prefixIcon: Icon(prefixIcon, color: Color(0xff4EBE44)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -446,7 +447,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
   }
 
   Widget _buildCalculateButton(LanguageProvider languageProvider) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
@@ -455,7 +456,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
           backgroundColor: Color(0xff4EBE44),
           foregroundColor: Colors.white,
           elevation: 8,
-          shadowColor: Color(0xff4EBE44).withOpacity(0.4),
+          shadowColor: Color(0xff4EBE44).withAlpha(102),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -512,7 +513,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha(26),
               blurRadius: 10,
               offset: Offset(0, 5),
             ),
@@ -526,7 +527,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xff4EBE44).withOpacity(0.1),
+                    color: Color(0xff4EBE44).withAlpha(26),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -607,7 +608,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                         Text(
                           languageProvider.translate('total_cost'),
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withAlpha(230),
                             fontSize: 16,
                           ),
                         ),
@@ -641,16 +642,16 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha(26),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withAlpha(78)),
       ),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withAlpha(51),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),

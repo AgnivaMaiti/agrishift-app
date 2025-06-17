@@ -68,7 +68,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                           Container(
                             padding: EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Color(0xFF4EBE44).withOpacity(0.2),
+                              color: Color(0xFF4EBE44).withAlpha(52),
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: Icon(
@@ -173,10 +173,10 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Color(0xFF4EBE44).withOpacity(0.2),
+                    color: Color(0xFF4EBE44).withAlpha(51),
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
-                      color: Color(0xFF4EBE44).withOpacity(0.3),
+                      color: Color(0xFF4EBE44).withAlpha(78),
                       width: 1,
                     ),
                   ),
@@ -214,7 +214,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withAlpha(26),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -235,7 +235,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withAlpha(26),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -257,7 +257,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withAlpha(26),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -279,7 +279,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withAlpha(26),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -309,7 +309,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: Color(0xff01342C).withOpacity(0.05),
+            color: Color(0xff01342C).withAlpha(13),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
@@ -349,7 +349,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
         leading: Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Color(0xFF4EBE44).withOpacity(0.2),
+            color: Color(0xFF4EBE44).withAlpha(51),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: Colors.white, size: 20),
@@ -393,7 +393,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color(0xff01342C).withOpacity(0.1),
+                  color: Color(0xff01342C).withAlpha(26),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(Icons.language, color: Color(0xff01342C), size: 24),

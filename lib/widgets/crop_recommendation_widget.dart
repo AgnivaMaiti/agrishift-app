@@ -99,6 +99,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
         _isLoading = false;
         _errorMessage = 'Error predicting crop: $e';
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -147,7 +148,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withAlpha(38),
             blurRadius: 20,
             offset: Offset(0, 8),
             spreadRadius: 0,
@@ -161,7 +162,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
           Container(
             padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withAlpha(26),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -176,7 +177,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xff4EBE44).withOpacity(0.3),
+                        color: Color(0xff4EBE44).withAlpha(79),
                         blurRadius: 8,
                         offset: Offset(0, 4),
                       ),
@@ -202,7 +203,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                         'AI-powered crop selection',
                         style: TextStyle(
                           fontSize: 13,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withAlpha(204),
                         ),
                       ),
                     ],
@@ -257,7 +258,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             Text(
               'Analyzing soil conditions...',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withAlpha(204),
                 fontSize: 16,
               ),
             ),
@@ -321,15 +322,15 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withAlpha(26),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
+              border: Border.all(color: Colors.white.withAlpha(51)),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.info_outline,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withAlpha(204),
                   size: 20,
                 ),
                 SizedBox(width: 12),
@@ -337,7 +338,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                   child: Text(
                     languageProvider.translate('enter_soil_climate_data'),
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withAlpha(230),
                       fontSize: 14,
                     ),
                   ),
@@ -448,7 +449,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xff4EBE44).withOpacity(0.4),
+                  color: Color(0xff4EBE44).withAlpha(102),
                   blurRadius: 12,
                   offset: Offset(0, 6),
                 ),
@@ -501,7 +502,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
           child: Container(
             height: 1,
             margin: EdgeInsets.only(left: 12),
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withAlpha(79),
           ),
         ),
       ],
@@ -517,9 +518,9 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withAlpha(26),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        border: Border.all(color: Colors.white.withAlpha(79)),
       ),
       child: TextFormField(
         controller: controller,
@@ -529,17 +530,13 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withAlpha(204),
             fontSize: 13,
           ),
-          prefixIcon: Icon(
-            icon,
-            color: Colors.white.withOpacity(0.7),
-            size: 18,
-          ),
+          prefixIcon: Icon(icon, color: Colors.white.withAlpha(179), size: 18),
           suffixText: suffix,
           suffixStyle: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withAlpha(179),
             fontSize: 12,
           ),
           border: InputBorder.none,
@@ -612,7 +609,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             border: Border.all(color: Color(0xFF147b2c), width: 2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(26),
                 blurRadius: 8,
                 offset: Offset(0, 4),
               ),
@@ -649,7 +646,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
               Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Color(0xFF147b2c).withOpacity(0.1),
+                  color: Color(0xFF147b2c).withAlpha(26),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(

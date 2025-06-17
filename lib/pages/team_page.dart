@@ -43,23 +43,7 @@ class _ProfessionalDirectoryState extends State<ProfessionalDirectory> {
       name: "Siya Nimkar",
       role: "Researcher",
       imageUrl: "https://i.postimg.cc/PJ2jfK0m/siya-pic.jpg",
-      socialLinks: [
-        SocialLink(
-          platform: 'Facebook',
-          iconPath: 'assets/images/facebook.png',
-          url: '',
-        ),
-        SocialLink(
-          platform: 'LinkedIn',
-          iconPath: 'assets/images/linkedin.png',
-          url: '',
-        ),
-        SocialLink(
-          platform: 'Twitter',
-          iconPath: 'assets/images/x.png',
-          url: '',
-        ),
-      ],
+      socialLinks: [],
     ),
     Professional(
       name: "Shrut kolhe",
@@ -75,12 +59,12 @@ class _ProfessionalDirectoryState extends State<ProfessionalDirectory> {
         SocialLink(
           platform: 'LinkedIn',
           iconPath: 'assets/images/linkedin.png',
-          url: '',
+          url: 'https://www.linkedin.com/in/suvanshhh/',
         ),
         SocialLink(
           platform: 'Github',
           iconPath: 'assets/images/github.png',
-          url: '',
+          url: 'https://github.com/Suvanshhh',
         ),
       ],
     ),
@@ -92,12 +76,12 @@ class _ProfessionalDirectoryState extends State<ProfessionalDirectory> {
         SocialLink(
           platform: 'LinkedIn',
           iconPath: 'assets/images/linkedin.png',
-          url: '',
+          url: 'https://www.linkedin.com/in/agniva-maiti/',
         ),
         SocialLink(
           platform: 'Github',
           iconPath: 'assets/images/github.png',
-          url: '',
+          url: 'https://github.com/AgnivaMaiti',
         ),
       ],
     ),
@@ -126,7 +110,7 @@ class _ProfessionalDirectoryState extends State<ProfessionalDirectory> {
         SocialLink(
           platform: 'LinkedIn',
           iconPath: 'assets/images/linkedin.png',
-          url: '',
+          url: 'https://www.linkedin.com/in/isha-deolekar-b48153247/',
         ),
       ],
     ),
