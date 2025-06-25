@@ -159,7 +159,7 @@ class _NewsWidgetState extends State<NewsWidget> {
 
           // Content Section
           if (isLoading)
-            Container(
+            SizedBox(
               height: 200,
               child: Center(
                 child: Column(

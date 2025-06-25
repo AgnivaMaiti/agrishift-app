@@ -234,7 +234,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
   }
 
   Widget _buildLoadingWidget() {
-    return Container(
+    return SizedBox(
       height: 150,
       child: Center(
         child: Column(
