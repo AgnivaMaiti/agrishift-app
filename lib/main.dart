@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
       locale: languageProvider.locale,
       theme: ThemeData(
         primaryColor: Color(0xff01342C),
+        appBarTheme: AppBarTheme(backgroundColor: Color(0xff01342C)),
         fontFamily: 'Poppins',
         textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(

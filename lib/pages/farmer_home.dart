@@ -1,3 +1,4 @@
+import 'package:agro/custom%20widgets/custom_section_header.dart';
 import 'package:agro/pages/about_us.dart';
 import 'package:agro/pages/news.dart';
 import 'package:agro/providers/language_provider.dart';
@@ -143,57 +144,61 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
           ),
         ),
         backgroundColor: Color(0xffFFF8F0),
+        // appBar: PreferredSize(
+        //   preferredSize: Size.fromHeight(100),
+        //   child: Container(
+        //     padding: EdgeInsets.fromLTRB(20, 40, 20, 15),
+        //     decoration: BoxDecoration(color: Color(0xff01342C)),
+        //     child: Row(
+        //       children: [
+        //         Expanded(
+        //           child: Column(
+        //             crossAxisAlignment: CrossAxisAlignment.start,
+        //             mainAxisAlignment: MainAxisAlignment.center,
+        //             children: [
+        //               Text(
+        //                 localizedStrings['hello farmer'] ?? "Hello Farmer",
+        //                 style: TextStyle(
+        //                   color: Colors.white,
+        //                   fontSize: 26,
+        //                   fontWeight: FontWeight.bold,
+        //                 ),
+        //               ),
+        //               SizedBox(height: 4),
+        //               Text(
+        //                 "Let's grow together 🌱",
+        //                 style: TextStyle(color: Colors.white70, fontSize: 14),
+        //               ),
+        //             ],
+        //           ),
+        //         ),
+        //         Container(
+        //           decoration: BoxDecoration(
+        //             color: Color(0xFF4EBE44).withAlpha(51),
+        //             borderRadius: BorderRadius.circular(15),
+        //             border: Border.all(
+        //               color: Color(0xFF4EBE44).withAlpha(78),
+        //               width: 1,
+        //             ),
+        //           ),
+        //           child: IconButton(
+        //             onPressed: () {
+        //               _scaffoldKey.currentState?.openEndDrawer();
+        //             },
+        //             icon: const Icon(
+        //               Icons.menu_rounded,
+        //               color: Color(0xFFFFF8F0),
+        //               size: 28,
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(100),
-          child: Container(
-            padding: EdgeInsets.fromLTRB(20, 40, 20, 15),
-            decoration: BoxDecoration(color: Color(0xff01342C)),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        localizedStrings['hello farmer'] ?? "Hello Farmer",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Let's grow together 🌱",
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFF4EBE44).withAlpha(51),
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                      color: Color(0xFF4EBE44).withAlpha(78),
-                      width: 1,
-                    ),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      _scaffoldKey.currentState?.openEndDrawer();
-                    },
-                    icon: const Icon(
-                      Icons.menu_rounded,
-                      color: Color(0xFFFFF8F0),
-                      size: 28,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          preferredSize: Size.fromHeight(60),
+          child: CustomSectionHeader(title: "Hello Farmer", showDialog: true),
         ),
         body: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
@@ -249,7 +254,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
 
                 // Labor Estimation Section
                 _buildSectionCard(
-                  title: languageProvider.translate('labour_estimation'),
+                  title: languageProvider.translate('labor_estimation'),
                   icon: Icons.groups_outlined,
                   child: Container(
                     decoration: BoxDecoration(
@@ -289,7 +294,7 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                   ),
                 ),
 
-                SizedBox(height: 30),
+                SizedBox(height: h * 0.02),
               ],
             ),
           ),
@@ -398,12 +403,15 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                 ),
                 child: Icon(Icons.language, color: Color(0xff01342C), size: 24),
               ),
-              SizedBox(width: 12),
-              Text(
-                languageProvider.translate('change_language'),
-                style: TextStyle(
-                  color: Color(0xff01342C),
-                  fontWeight: FontWeight.w600,
+              // SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  languageProvider.translate('change_language'),
+                  style: TextStyle(
+                    color: Color(0xff01342C),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ],
