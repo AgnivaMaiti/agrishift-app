@@ -34,32 +34,13 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    _initializeService();
-  }
-
-  Future<void> _initializeService() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await _service.loadModel();
-      setState(() {
-        _isLoading = false;
-      });
-      _animationController.forward();
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Error loading model: $e';
-      });
-    }
+    _animationController.forward();
   }
 
   Future<void> _predictCrop() async {
@@ -104,8 +85,8 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.error_outline, color: Colors.white),
-              SizedBox(width: 8),
+              const Icon(Icons.error_outline, color: Colors.white),
+              const SizedBox(width: 8),
               Expanded(child: Text(_errorMessage)),
             ],
           ),
@@ -138,9 +119,9 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
     final languageProvider = Provider.of<LanguageProvider>(context);
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [Color(0xff01342C), Color(0xff0a4a3e), Color(0xff147b5a)],
@@ -150,7 +131,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
           BoxShadow(
             color: Colors.black.withAlpha(38),
             blurRadius: 20,
-            offset: Offset(0, 8),
+            offset: const Offset(0, 8),
             spreadRadius: 0,
           ),
         ],
@@ -160,10 +141,10 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
         children: [
           // Header Section
           Container(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: Colors.white.withAlpha(26),
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
               ),
@@ -171,34 +152,34 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Color(0xff4EBE44),
+                    color: const Color(0xff4EBE44),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xff4EBE44).withAlpha(79),
+                        color: const Color(0xff4EBE44).withAlpha(79),
                         blurRadius: 8,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: Icon(Icons.agriculture, color: Colors.white, size: 24),
+                  child: const Icon(Icons.agriculture, color: Colors.white, size: 24),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         languageProvider.translate('crop_recommendation_tool'),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         'AI-powered crop selection',
                         style: TextStyle(
@@ -215,12 +196,10 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
 
           // Content Section
           Padding(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child:
                 _isLoading
                     ? _buildLoadingWidget()
-                    : _errorMessage.isNotEmpty
-                    ? _buildErrorWidget()
                     : _hasRecommendation
                     ? _buildRecommendationResult(languageProvider)
                     : FadeTransition(
@@ -243,7 +222,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             Stack(
               alignment: Alignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 60,
                   height: 60,
                   child: CircularProgressIndicator(
@@ -251,10 +230,10 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                     strokeWidth: 4,
                   ),
                 ),
-                Icon(Icons.eco, color: Color(0xff4EBE44), size: 28),
+                const Icon(Icons.eco, color: Color(0xff4EBE44), size: 28),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'Analyzing soil conditions...',
               style: TextStyle(
@@ -268,51 +247,6 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
     );
   }
 
-  Widget _buildErrorWidget() {
-    return Container(
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.red[50],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red[200]!, width: 1),
-      ),
-      child: Column(
-        children: [
-          Icon(Icons.error_outline, color: Colors.red[600], size: 48),
-          SizedBox(height: 16),
-          Text(
-            'Model Loading Failed',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.red[700],
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            _errorMessage,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.red[600], fontSize: 14),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton.icon(
-            onPressed: _initializeService,
-            icon: Icon(Icons.refresh, size: 18),
-            label: Text('Retry'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red[600],
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildInputForm(LanguageProvider languageProvider) {
     return Form(
       key: _formKey,
@@ -320,7 +254,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white.withAlpha(26),
               borderRadius: BorderRadius.circular(12),
@@ -333,7 +267,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                   color: Colors.white.withAlpha(204),
                   size: 20,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     languageProvider.translate('enter_soil_climate_data'),
@@ -346,11 +280,11 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
               ],
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
 
           // Soil Nutrients Section
           _buildSectionHeader('Soil Nutrients', Icons.scatter_plot),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -362,7 +296,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                   languageProvider,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildTextField(
                   'Phosphorus (P)',
@@ -374,7 +308,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -386,7 +320,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                   languageProvider,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildTextField(
                   'pH Value',
@@ -399,11 +333,11 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             ],
           ),
 
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
 
           // Climate Conditions Section
           _buildSectionHeader('Climate Conditions', Icons.wb_sunny),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -415,7 +349,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                   languageProvider,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildTextField(
                   'Humidity',
@@ -427,7 +361,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildTextField(
             'Rainfall',
             _rainfallController,
@@ -436,22 +370,22 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             languageProvider,
           ),
 
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
 
           // Predict Button
           Container(
             width: double.infinity,
             height: 56,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 colors: [Color(0xff4EBE44), Color(0xff66d455)],
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xff4EBE44).withAlpha(102),
+                  color: const Color(0xff4EBE44).withAlpha(102),
                   blurRadius: 12,
-                  offset: Offset(0, 6),
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
@@ -464,11 +398,11 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.psychology, color: Colors.white, size: 20),
-                      SizedBox(width: 12),
+                      const Icon(Icons.psychology, color: Colors.white, size: 20),
+                      const SizedBox(width: 12),
                       Text(
                         languageProvider.translate('get_recommendation'),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -488,11 +422,11 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
   Widget _buildSectionHeader(String title, IconData icon) {
     return Row(
       children: [
-        Icon(icon, color: Color(0xff4EBE44), size: 20),
-        SizedBox(width: 8),
+        Icon(icon, color: const Color(0xff4EBE44), size: 20),
+        const SizedBox(width: 8),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -501,7 +435,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
         Expanded(
           child: Container(
             height: 1,
-            margin: EdgeInsets.only(left: 12),
+            margin: const EdgeInsets.only(left: 12),
             color: Colors.white.withAlpha(79),
           ),
         ),
@@ -524,9 +458,9 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
       ),
       child: TextFormField(
         controller: controller,
-        keyboardType: TextInputType.numberWithOptions(decimal: true),
-        style: TextStyle(color: Colors.white, fontSize: 14),
-        cursorColor: Color(0xff4EBE44),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        style: const TextStyle(color: Colors.white, fontSize: 14),
+        cursorColor: const Color(0xff4EBE44),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
@@ -540,7 +474,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             fontSize: 12,
           ),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
         ),
         validator: (value) {
@@ -562,7 +496,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
       children: [
         // Success Header
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.green[50],
             borderRadius: BorderRadius.circular(12),
@@ -571,14 +505,14 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.green[600],
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.check_circle, color: Colors.white, size: 20),
+                child: const Icon(Icons.check_circle, color: Colors.white, size: 20),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   'Recommendation Ready!',
@@ -593,25 +527,25 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
           ),
         ),
 
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
 
         // Recommended Crop Card
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [Colors.white, Color(0xFFFFF8F0)],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Color(0xFF147b2c), width: 2),
+            border: Border.all(color: const Color(0xFF147b2c), width: 2),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withAlpha(26),
                 blurRadius: 8,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -620,8 +554,8 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             children: [
               Row(
                 children: [
-                  Icon(Icons.agriculture, color: Color(0xFF147b2c), size: 24),
-                  SizedBox(width: 8),
+                  const Icon(Icons.agriculture, color: Color(0xFF147b2c), size: 24),
+                  const SizedBox(width: 8),
                   Text(
                     'Recommended Crop',
                     style: TextStyle(
@@ -632,35 +566,35 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                   ),
                 ],
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
                 _recommendedCrop.toUpperCase(),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF147b2c),
                   letterSpacing: 1.2,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Color(0xFF147b2c).withAlpha(26),
+                  color: const Color(0xFF147b2c).withAlpha(26),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.lightbulb_outline,
                       color: Color(0xFF147b2c),
                       size: 16,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         languageProvider.translate('recommendation_note'),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontStyle: FontStyle.italic,
                           fontSize: 13,
                           color: Color(0xFF147b2c),
@@ -674,7 +608,7 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
           ),
         ),
 
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
 
         // Action Buttons
         Row(
@@ -693,13 +627,13 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
                     _rainfallController.clear();
                   });
                 },
-                icon: Icon(Icons.refresh, size: 18),
-                label: Text('New Prediction'),
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('New Prediction'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: Color(0xFF147b2c),
-                  side: BorderSide(color: Color(0xFF147b2c)),
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  foregroundColor: const Color(0xFF147b2c),
+                  side: const BorderSide(color: Color(0xFF147b2c)),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

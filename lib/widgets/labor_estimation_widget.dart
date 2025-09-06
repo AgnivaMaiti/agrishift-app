@@ -79,12 +79,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
     ).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
-    _loadModels();
     _animationController.forward();
-  }
-
-  Future<void> _loadModels() async {
-    await _estimationService.loadModels();
   }
 
   Future<void> _calculateEstimation() async {
@@ -124,15 +119,15 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.white),
-            SizedBox(width: 8),
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 8),
             Expanded(child: Text(message)),
           ],
         ),
         backgroundColor: Colors.red[700],
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: EdgeInsets.all(16),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }
@@ -151,7 +146,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
@@ -164,23 +159,23 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                   BoxShadow(
                     color: Colors.black.withAlpha(78),
                     blurRadius: 20,
-                    offset: Offset(0, 10),
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildHeader(languageProvider),
-                      SizedBox(height: 32),
+                      const SizedBox(height: 32),
                       _buildInputSection(languageProvider),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       _buildCalculateButton(languageProvider),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       if (_estimationResult != null)
                         _buildResultsSection(languageProvider),
                     ],
@@ -196,31 +191,35 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
 
   Widget _buildHeader(LanguageProvider languageProvider) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Color(0xff4EBE44).withAlpha(51),
+              color: const Color(0xff4EBE44).withAlpha(51),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(Icons.agriculture, color: Color(0xff4EBE44), size: 32),
+            child: const Icon(
+              Icons.agriculture,
+              color: Color(0xff4EBE44),
+              size: 32,
+            ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   languageProvider.translate('labor_estimation'),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   languageProvider.translate('calculate_farming_costs'),
                   style: TextStyle(
@@ -257,10 +256,10 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
           Icons.eco,
           _cropIcons,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
 
         _buildAreaInput(languageProvider),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
 
         _buildEnhancedDropdown(
           languageProvider,
@@ -277,7 +276,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
           Icons.calendar_today,
           _seasonIcons,
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
 
         _buildWageTypeSelector(languageProvider),
       ],
@@ -292,16 +291,22 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
         border: Border.all(color: Colors.white.withAlpha(78)),
       ),
       child: TextFormField(
-        style: TextStyle(color: Colors.white, fontSize: 16),
-        cursorColor: Color(0xff4EBE44),
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+        cursorColor: const Color(0xff4EBE44),
         decoration: InputDecoration(
           labelText: languageProvider.translate('area_in_hectares'),
           labelStyle: TextStyle(color: Colors.white.withAlpha(204)),
-          prefixIcon: Icon(Icons.crop_landscape, color: Color(0xff4EBE44)),
+          prefixIcon: const Icon(
+            Icons.crop_landscape,
+            color: Color(0xff4EBE44),
+          ),
           suffixText: 'ha',
           suffixStyle: TextStyle(color: Colors.white.withAlpha(204)),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
         ),
         keyboardType: TextInputType.number,
         initialValue: _area.toString(),
@@ -320,13 +325,13 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
       children: [
         Text(
           languageProvider.translate('wage_type'),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Row(
           children:
               _wageTypeOptions.map((option) {
@@ -339,21 +344,21 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                       });
                     },
                     child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       margin: EdgeInsets.only(
                         right: option == _wageTypeOptions.last ? 0 : 12,
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       decoration: BoxDecoration(
                         color:
                             isSelected
-                                ? Color(0xff4EBE44)
+                                ? const Color(0xff4EBE44)
                                 : Colors.white.withAlpha(26),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color:
                               isSelected
-                                  ? Color(0xff4EBE44)
+                                  ? const Color(0xff4EBE44)
                                   : Colors.white.withAlpha(78),
                         ),
                       ),
@@ -366,7 +371,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                             color: Colors.white,
                             size: 24,
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             option,
                             style: TextStyle(
@@ -378,7 +383,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             '₹${option == 'Govt' ? _govtWage.toInt() : _expectedWage.toInt()}',
                             style: TextStyle(
@@ -413,15 +418,18 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
         border: Border.all(color: Colors.white.withAlpha(78)),
       ),
       child: DropdownButtonFormField<String>(
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        style: const TextStyle(color: Colors.white, fontSize: 16),
         iconEnabledColor: Colors.white,
-        dropdownColor: Color(0xff01342C),
+        dropdownColor: const Color(0xff01342C),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: Colors.white.withAlpha(204)),
-          prefixIcon: Icon(prefixIcon, color: Color(0xff4EBE44)),
+          prefixIcon: Icon(prefixIcon, color: const Color(0xff4EBE44)),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
         ),
         value: value,
         items:
@@ -432,11 +440,11 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                   children: [
                     Icon(
                       itemIcons[item] ?? Icons.circle,
-                      color: Color(0xff4EBE44),
+                      color: const Color(0xff4EBE44),
                       size: 20,
                     ),
-                    SizedBox(width: 12),
-                    Text(item, style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 12),
+                    Text(item, style: const TextStyle(color: Colors.white)),
                   ],
                 ),
               );
@@ -453,10 +461,10 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
       child: ElevatedButton(
         onPressed: _isLoading ? null : _calculateEstimation,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xff4EBE44),
+          backgroundColor: const Color(0xff4EBE44),
           foregroundColor: Colors.white,
           elevation: 8,
-          shadowColor: Color(0xff4EBE44).withAlpha(102),
+          shadowColor: const Color(0xff4EBE44).withAlpha(102),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -466,7 +474,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                 ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
@@ -474,10 +482,10 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                         strokeWidth: 2,
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Text(
                       languageProvider.translate('calculating'),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -487,11 +495,11 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                 : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.calculate, size: 24),
-                    SizedBox(width: 8),
+                    const Icon(Icons.calculate, size: 24),
+                    const SizedBox(width: 8),
                     Text(
                       languageProvider.translate('calculate_labor_cost'),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -504,10 +512,10 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
 
   Widget _buildResultsSection(LanguageProvider languageProvider) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
       child: Container(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -515,7 +523,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
             BoxShadow(
               color: Colors.black.withAlpha(26),
               blurRadius: 10,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 5),
             ),
           ],
         ),
@@ -525,21 +533,21 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xff4EBE44).withAlpha(26),
+                    color: const Color(0xff4EBE44).withAlpha(26),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.assessment,
                     color: Color(0xff4EBE44),
                     size: 24,
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(
                   languageProvider.translate('estimation_results'),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                     color: Color(0xff01342C),
@@ -547,13 +555,13 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             _buildResultCard(
               Icons.eco,
               languageProvider.translate('crop'),
               _estimationResult!['crop'].toString(),
-              Color(0xff4EBE44),
+              const Color(0xff4EBE44),
             ),
 
             _buildResultCard(
@@ -584,9 +592,9 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
               Colors.teal,
             ),
 
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xff4EBE44), Color(0xff45A63A)],
@@ -595,12 +603,12 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.account_balance_wallet,
                     color: Colors.white,
                     size: 28,
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -614,7 +622,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                         ),
                         Text(
                           '₹${_estimationResult!['total_cost']}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -639,8 +647,8 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
     Color color,
   ) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withAlpha(26),
         borderRadius: BorderRadius.circular(12),
@@ -649,14 +657,14 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withAlpha(51),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -667,7 +675,7 @@ class _LaborEstimationWidgetState extends State<LaborEstimationWidget>
                 ),
                 Text(
                   value,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xff01342C),
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
