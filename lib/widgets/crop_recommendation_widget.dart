@@ -13,22 +13,29 @@ class CropRecommendationWidget extends StatefulWidget {
 
 class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
     with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _nitrogenController = TextEditingController();
-  final _phosphorusController = TextEditingController();
-  final _potassiumController = TextEditingController();
-  final _temperatureController = TextEditingController();
-  final _humidityController = TextEditingController();
-  final _phController = TextEditingController();
-  final _rainfallController = TextEditingController();
-
+  // --- Services and Global State ---
   final CropRecommendationService _service = CropRecommendationService();
-  String _recommendedCrop = '';
+  final SoilDatabase _db = SoilDatabase();
   bool _isLoading = false;
-  bool _hasRecommendation = false;
   String _errorMessage = '';
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  bool _isDbInitialized = false;
+
+  // --- Tier 1 (Simple) State ---
+  String? _selectedPanchayat;
+  Season _selectedSeason = Season.any;
+  List<CropRecommendationResult> _simpleRecommendations = [];
+
+  // --- Tier 2 (Detailed) State ---
+  final _formKey = GlobalKey<FormState>();
+  final _nController = TextEditingController();
+  final _pController = TextEditingController();
+  final _kController = TextEditingController();
+  final _phController = TextEditingController();
+  final _ecController = TextEditingController();
+  final _ocController = TextEditingController();
+  CropRecommendationResult? _detailedRecommendation;
 
   @override
   void initState() {
@@ -40,79 +47,116 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    _animationController.forward();
+    _initializeDatabase();
   }
 
-  Future<void> _predictCrop() async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> _initializeDatabase() async {
+    try {
+      await _db.initialize();
+      if (!mounted) return;
+      setState(() {
+        if (_db.uniquePanchayats.isNotEmpty) {
+          _selectedPanchayat = _db.uniquePanchayats.first;
+        }
+        _isDbInitialized = true;
+        _animationController.forward();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Failed to load database. Please restart the app.';
+      });
+    }
+  }
 
+  // --- Prediction Logic ---
+
+  Future<void> _getSimpleRecommendation() async {
+    if (_selectedPanchayat == null) return;
     setState(() {
       _isLoading = true;
       _errorMessage = '';
+      _simpleRecommendations = [];
+    });
+    try {
+      final results = await _service.getSimpleRecommendation(
+        panchayat: _selectedPanchayat!,
+        season: _selectedSeason,
+      );
+      if (mounted) setState(() => _simpleRecommendations = results);
+    } catch (e) {
+      _handleError(e);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _getDetailedRecommendation() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+      _detailedRecommendation = null;
     });
 
     try {
-      final nitrogen = double.parse(_nitrogenController.text);
-      final phosphorus = double.parse(_phosphorusController.text);
-      final potassium = double.parse(_potassiumController.text);
-      final temperature = double.parse(_temperatureController.text);
-      final humidity = double.parse(_humidityController.text);
-      final ph = double.parse(_phController.text);
-      final rainfall = double.parse(_rainfallController.text);
-
-      final cropName = await _service.predictCrop(
-        nitrogen: nitrogen,
-        phosphorus: phosphorus,
-        potassium: potassium,
-        temperature: temperature,
-        humidity: humidity,
-        ph: ph,
-        rainfall: rainfall,
+      final result = await _service.getDetailedRecommendation(
+        n: double.parse(_nController.text),
+        p: double.parse(_pController.text),
+        k: double.parse(_kController.text),
+        ph: double.parse(_phController.text),
+        ec: double.parse(_ecController.text),
+        oc: double.parse(_ocController.text),
       );
-
-      setState(() {
-        _recommendedCrop = cropName;
-        _hasRecommendation = true;
-        _isLoading = false;
-      });
+      if (mounted) setState(() => _detailedRecommendation = result);
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Error predicting crop: $e';
-      });
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.error_outline, color: Colors.white),
-              const SizedBox(width: 8),
-              Expanded(child: Text(_errorMessage)),
-            ],
-          ),
-          backgroundColor: Colors.red[600],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      _handleError(e);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _handleError(Object e) {
+    if (!mounted) return;
+    setState(() {
+      _errorMessage = 'Error getting recommendation: $e';
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_errorMessage),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
+  }
+
+  void _resetForms() {
+    setState(() {
+      _simpleRecommendations = [];
+      _detailedRecommendation = null;
+      _nController.clear();
+      _pController.clear();
+      _kController.clear();
+      _phController.clear();
+      _ecController.clear();
+      _ocController.clear();
+      _animationController.forward(from: 0.0);
+    });
   }
 
   @override
   void dispose() {
-    _nitrogenController.dispose();
-    _phosphorusController.dispose();
-    _potassiumController.dispose();
-    _temperatureController.dispose();
-    _humidityController.dispose();
+    _nController.dispose();
+    _pController.dispose();
+    _kController.dispose();
     _phController.dispose();
-    _rainfallController.dispose();
+    _ecController.dispose();
+    _ocController.dispose();
     _animationController.dispose();
-    _service.dispose();
     super.dispose();
   }
+
+  // --- BUILD METHOD ---
+  // The layout structure here is corrected to prevent crashes.
 
   @override
   Widget build(BuildContext context) {
@@ -132,114 +176,141 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
             color: Colors.black.withAlpha(38),
             blurRadius: 20,
             offset: const Offset(0, 8),
-            spreadRadius: 0,
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Section
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white.withAlpha(26),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
+      child: DefaultTabController(
+        length: 2,
+        child: Column(
+          // This Column's size will be determined by its children.
+          mainAxisSize: MainAxisSize.min, // Important for nested scrolling scenarios
+          children: [
+            _buildHeader(languageProvider),
+            const TabBar(
+              indicatorColor: Color(0xff4EBE44),
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              tabs: [
+                Tab(icon: Icon(Icons.location_on_outlined), text: "Simple"),
+                Tab(icon: Icon(Icons.science_outlined), text: "Detailed"),
+              ],
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xff4EBE44),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xff4EBE44).withAlpha(79),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(Icons.agriculture, color: Colors.white, size: 24),
+            // **LAYOUT FIX HERE**
+            // The TabBarView needs a defined height. We wrap it in a SizedBox
+            // instead of Expanded to prevent layout errors when this widget is
+            // placed in a vertically scrolling parent like a ListView.
+            // The content inside the tabs is already scrollable.
+            SizedBox(
+              height: 600, // Adjust this height as needed for your UI
+              child: !_isDbInitialized
+                  ? _buildLoadingWidget("Initializing Database...")
+                  : TabBarView(
+                      children: [
+                        _buildSimpleTab(languageProvider),
+                        _buildDetailedTab(languageProvider),
+                      ],
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildSimpleTab(LanguageProvider languageProvider) {
+    bool hasRecommendation = _simpleRecommendations.isNotEmpty;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: _isLoading
+          ? _buildLoadingWidget("Finding best crops...")
+          : hasRecommendation
+              ? _buildSimpleResult(languageProvider)
+              : FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: _buildSimpleInput(languageProvider),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        languageProvider.translate('crop_recommendation_tool'),
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'AI-powered crop selection',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.white.withAlpha(204),
-                        ),
-                      ),
-                    ],
+    );
+  }
+
+  Widget _buildDetailedTab(LanguageProvider languageProvider) {
+    bool hasRecommendation = _detailedRecommendation != null;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: _isLoading
+          ? _buildLoadingWidget("Analyzing soil data...")
+          : hasRecommendation
+              ? _buildDetailedResult(languageProvider)
+              : FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: _buildDetailedInput(languageProvider),
+                ),
+    );
+  }
+
+  // --- UI Components ---
+
+  Widget _buildHeader(LanguageProvider languageProvider) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(26),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xff4EBE44),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.agriculture, color: Colors.white, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  languageProvider.translate('crop_recommendation_tool'),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'AI-powered crop selection',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white.withAlpha(204),
                   ),
                 ),
               ],
             ),
-          ),
-
-          // Content Section
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child:
-                _isLoading
-                    ? _buildLoadingWidget()
-                    : _hasRecommendation
-                    ? _buildRecommendationResult(languageProvider)
-                    : FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: _buildInputForm(languageProvider),
-                    ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLoadingWidget() {
+  Widget _buildLoadingWidget(String message) {
     return SizedBox(
-      height: 150,
+      height: 200,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                const SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: CircularProgressIndicator(
-                    color: Color(0xff4EBE44),
-                    strokeWidth: 4,
-                  ),
-                ),
-                const Icon(Icons.eco, color: Color(0xff4EBE44), size: 28),
-              ],
-            ),
+            const CircularProgressIndicator(color: Color(0xff4EBE44)),
             const SizedBox(height: 20),
             Text(
-              'Analyzing soil conditions...',
-              style: TextStyle(
-                color: Colors.white.withAlpha(204),
-                fontSize: 16,
-              ),
+              message,
+              style: TextStyle(color: Colors.white.withAlpha(204), fontSize: 16),
             ),
           ],
         ),
@@ -247,402 +318,275 @@ class _CropRecommendationWidgetState extends State<CropRecommendationWidget>
     );
   }
 
-  Widget _buildInputForm(LanguageProvider languageProvider) {
+  Widget _buildSimpleInput(LanguageProvider languageProvider) {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedPanchayat,
+              isExpanded: true,
+              icon: const Icon(Icons.arrow_drop_down, color: Color(0xff01342C)),
+              style: const TextStyle(
+                color: Color(0xff01342C), 
+                fontSize: 16,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+              items: _db.uniquePanchayats.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (newValue) => setState(() => _selectedPanchayat = newValue),
+              hint: const Text('Select Region', style: TextStyle(
+                color: Colors.grey,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
+              )),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<Season>(
+              value: _selectedSeason,
+              isExpanded: true,
+              icon: const Icon(Icons.arrow_drop_down, color: Color(0xff01342C)),
+              style: const TextStyle(
+                color: Color(0xff01342C), 
+                fontSize: 16,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+              items: Season.values.map((Season season) {
+                return DropdownMenuItem<Season>(
+                  value: season,
+                  child: Text(season.toString().split('.').last.capitalize()),
+                );
+              }).toList(),
+              onChanged: (newValue) => setState(() => _selectedSeason = newValue!),
+              hint: const Text('Select Season', style: TextStyle(
+                color: Colors.grey,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
+              )),
+            ),
+          ),
+        ),
+        const SizedBox(height: 32),
+        _buildPredictButton(_getSimpleRecommendation, languageProvider),
+      ],
+    );
+  }
+
+  Widget _buildDetailedInput(LanguageProvider languageProvider) {
     return Form(
       key: _formKey,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withAlpha(26),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withAlpha(51)),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  color: Colors.white.withAlpha(204),
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    languageProvider.translate('enter_soil_climate_data'),
-                    style: TextStyle(
-                      color: Colors.white.withAlpha(230),
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Soil Nutrients Section
-          _buildSectionHeader('Soil Nutrients', Icons.scatter_plot),
+          _buildTextField('Nitrogen (N)', _nController, 'kg/ha', Icons.science, languageProvider),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField(
-                  'Nitrogen (N)',
-                  _nitrogenController,
-                  'kg/ha',
-                  Icons.science,
-                  languageProvider,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildTextField(
-                  'Phosphorus (P)',
-                  _phosphorusController,
-                  'kg/ha',
-                  Icons.science,
-                  languageProvider,
-                ),
-              ),
-            ],
-          ),
+          _buildTextField('Phosphorus (P)', _pController, 'kg/ha', Icons.science, languageProvider),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField(
-                  'Potassium (K)',
-                  _potassiumController,
-                  'kg/ha',
-                  Icons.science,
-                  languageProvider,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildTextField(
-                  'pH Value',
-                  _phController,
-                  '',
-                  Icons.analytics,
-                  languageProvider,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
-          // Climate Conditions Section
-          _buildSectionHeader('Climate Conditions', Icons.wb_sunny),
+          _buildTextField('Potassium (K)', _kController, 'kg/ha', Icons.science, languageProvider),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField(
-                  'Temperature',
-                  _temperatureController,
-                  '°C',
-                  Icons.thermostat,
-                  languageProvider,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildTextField(
-                  'Humidity',
-                  _humidityController,
-                  '%',
-                  Icons.water_drop,
-                  languageProvider,
-                ),
-              ),
-            ],
-          ),
+          _buildTextField('pH Value', _phController, '', Icons.analytics, languageProvider),
           const SizedBox(height: 16),
-          _buildTextField(
-            'Rainfall',
-            _rainfallController,
-            'mm',
-            Icons.cloud_queue,
-            languageProvider,
-          ),
-
+          _buildTextField('EC (Conductivity)', _ecController, 'dS/m', Icons.flash_on, languageProvider),
+          const SizedBox(height: 16),
+          _buildTextField('Organic Carbon (OC)', _ocController, '%', Icons.eco, languageProvider),
           const SizedBox(height: 32),
-
-          // Predict Button
-          Container(
-            width: double.infinity,
-            height: 56,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xff4EBE44), Color(0xff66d455)],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xff4EBE44).withAlpha(102),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: _predictCrop,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.psychology, color: Colors.white, size: 20),
-                      const SizedBox(width: 12),
-                      Text(
-                        languageProvider.translate('get_recommendation'),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+          _buildPredictButton(_getDetailedRecommendation, languageProvider),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title, IconData icon) {
-    return Row(
+  Widget _buildSimpleResult(LanguageProvider languageProvider) {
+    return Column(
       children: [
-        Icon(icon, color: const Color(0xff4EBE44), size: 20),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+        if (_simpleRecommendations.isEmpty)
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Text(
+                "No recommendations found for this region/season.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
+            ),
           ),
-        ),
-        Expanded(
-          child: Container(
-            height: 1,
-            margin: const EdgeInsets.only(left: 12),
-            color: Colors.white.withAlpha(79),
-          ),
-        ),
+        ..._simpleRecommendations.map((rec) => Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: ListTile(
+                leading: const Icon(Icons.agriculture, color: Color(0xFF147b2c)),
+                title: Text(rec.cropName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(rec.remarks),
+                isThreeLine: true,
+              ),
+            )),
+        const SizedBox(height: 24),
+        _buildNewPredictionButton(),
       ],
     );
   }
 
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller,
-    String suffix,
-    IconData icon,
-    LanguageProvider languageProvider,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withAlpha(26),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withAlpha(79)),
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        style: const TextStyle(color: Colors.white, fontSize: 14),
-        cursorColor: const Color(0xff4EBE44),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(
-            color: Colors.white.withAlpha(204),
-            fontSize: 13,
-          ),
-          prefixIcon: Icon(icon, color: Colors.white.withAlpha(179), size: 18),
-          suffixText: suffix,
-          suffixStyle: TextStyle(
-            color: Colors.white.withAlpha(179),
-            fontSize: 12,
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          floatingLabelBehavior: FloatingLabelBehavior.auto,
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Required';
-          }
-          if (double.tryParse(value) == null) {
-            return 'Invalid number';
-          }
-          return null;
-        },
-      ),
+  Widget _buildDetailedResult(LanguageProvider languageProvider) {
+    if (_detailedRecommendation == null) return const SizedBox.shrink();
+    return _buildResultCard(
+      cropName: _detailedRecommendation!.cropName,
+      remarks: _detailedRecommendation!.remarks,
+      confidence: _detailedRecommendation!.confidence,
     );
   }
 
-  Widget _buildRecommendationResult(LanguageProvider languageProvider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Success Header
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.green[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.green[200]!),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.green[600],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.check_circle, color: Colors.white, size: 20),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Recommendation Ready!',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green[800],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 20),
-
-        // Recommended Crop Card
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, Color(0xFFFFF8F0)],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFF147b2c), width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(26),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.agriculture, color: Color(0xFF147b2c), size: 24),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Recommended Crop',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                _recommendedCrop.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF147b2c),
-                  letterSpacing: 1.2,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF147b2c).withAlpha(26),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.lightbulb_outline,
-                      color: Color(0xFF147b2c),
-                      size: 16,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        languageProvider.translate('recommendation_note'),
-                        style: const TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 13,
-                          color: Color(0xFF147b2c),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 24),
-
-        // Action Buttons
-        Row(
+  Widget _buildResultCard({required String cropName, required String remarks, double? confidence}) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _hasRecommendation = false;
-                    _nitrogenController.clear();
-                    _phosphorusController.clear();
-                    _potassiumController.clear();
-                    _temperatureController.clear();
-                    _humidityController.clear();
-                    _phController.clear();
-                    _rainfallController.clear();
-                  });
-                },
-                icon: const Icon(Icons.refresh, size: 18),
-                label: const Text('New Prediction'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF147b2c),
-                  side: const BorderSide(color: Color(0xFF147b2c)),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            Text('Best Match Recommendation', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              cropName.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: const Color(0xFF147b2c),
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-              ),
             ),
+            if (confidence != null) ...[
+              const SizedBox(height: 8),
+              Chip(
+                avatar: const Icon(Icons.verified, size: 16, color: Colors.black54),
+                label: Text('Match Confidence: ${(confidence * 100).toStringAsFixed(1)}%'),
+                backgroundColor: Colors.green.shade100,
+              ),
+            ],
+            const Divider(height: 32),
+            Text('Cultivation Remarks:', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text(remarks, textAlign: TextAlign.center),
+            const SizedBox(height: 24),
+            _buildNewPredictionButton(),
           ],
         ),
-      ],
+      ),
     );
+  }
+  
+  // --- Common UI Components ---
+
+  Widget _buildNewPredictionButton() {
+    return ElevatedButton.icon(
+      onPressed: _resetForms,
+      icon: const Icon(Icons.refresh),
+      label: const Text('New Prediction'),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: const Color(0xff147b5a),
+        backgroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      ),
+    );
+  }
+
+  Widget _buildPredictButton(VoidCallback onPressed, LanguageProvider languageProvider) {
+    return Container(
+      width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(colors: [Color(0xff4EBE44), Color(0xff66d455)]),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onPressed,
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.psychology, color: Colors.white, size: 20),
+                const SizedBox(width: 12),
+                Text(
+                  languageProvider.translate('get_recommendation'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, String suffix, IconData icon, LanguageProvider languageProvider) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      style: const TextStyle(color: Colors.white, fontSize: 14),
+      cursorColor: const Color(0xff4EBE44),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.white.withAlpha(204), fontSize: 13),
+        prefixIcon: Icon(icon, color: Colors.white.withAlpha(179), size: 18),
+        suffixText: suffix,
+        suffixStyle: TextStyle(color: Colors.white.withAlpha(179), fontSize: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.white.withAlpha(79)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xff4EBE44)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.redAccent.shade100),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.redAccent.shade200, width: 2),
+        ),
+        errorStyle: TextStyle(color: Colors.redAccent.shade100),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.1),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) return 'Required';
+        if (double.tryParse(value) == null) return 'Invalid number';
+        return null;
+      },
+    );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    if (isEmpty) return "";
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }

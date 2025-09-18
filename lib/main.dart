@@ -1,5 +1,9 @@
+import 'package:agro/pages/profile_page.dart';
+import 'package:agro/pages/signin_page.dart';
+import 'package:agro/pages/signup_page.dart';
 import 'package:agro/providers/language_provider.dart';
 import 'package:agro/providers/navprovider.dart';
+import 'package:agro/providers/user_provider.dart';
 import 'package:agro/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,11 +15,15 @@ Future<void> main() async {
   final languageProvider = LanguageProvider();
   await languageProvider.loadLanguage('en');
 
+  final userProvider = UserProvider();
+  await userProvider.loadUser();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => languageProvider, child: MyApp()),
+        ChangeNotifierProvider(create: (_) => languageProvider),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProvider(create: (_) => userProvider),
       ],
       child: MyApp(),
     ),
@@ -43,7 +51,13 @@ class MyApp extends StatelessWidget {
           showUnselectedLabels: true,
         ),
       ),
-      home: Splash(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Splash(),
+        '/login': (context) => SignIn(userType: 'farmer'),
+        '/signup': (context) => SignUp(userType: 'farmer'),
+        '/profile': (context) => ProfilePage(),
+      },
     );
   }
 }

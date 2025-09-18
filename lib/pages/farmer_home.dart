@@ -115,7 +115,10 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
                       _buildDrawerItem(
                         icon: Icons.person_outline,
                         title: localizedStrings['profile'] ?? "Profile",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pop(context); // Close the drawer
+                          Navigator.pushNamed(context, '/profile');
+                        },
                       ),
                       _buildDrawerItem(
                         icon: Icons.info_outline,
@@ -144,61 +147,57 @@ class _FarmerHomeState extends State<FarmerHome> with TickerProviderStateMixin {
           ),
         ),
         backgroundColor: Color(0xffFFF8F0),
-        // appBar: PreferredSize(
-        //   preferredSize: Size.fromHeight(100),
-        //   child: Container(
-        //     padding: EdgeInsets.fromLTRB(20, 40, 20, 15),
-        //     decoration: BoxDecoration(color: Color(0xff01342C)),
-        //     child: Row(
-        //       children: [
-        //         Expanded(
-        //           child: Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             mainAxisAlignment: MainAxisAlignment.center,
-        //             children: [
-        //               Text(
-        //                 localizedStrings['hello farmer'] ?? "Hello Farmer",
-        //                 style: TextStyle(
-        //                   color: Colors.white,
-        //                   fontSize: 26,
-        //                   fontWeight: FontWeight.bold,
-        //                 ),
-        //               ),
-        //               SizedBox(height: 4),
-        //               Text(
-        //                 "Let's grow together 🌱",
-        //                 style: TextStyle(color: Colors.white70, fontSize: 14),
-        //               ),
-        //             ],
-        //           ),
-        //         ),
-        //         Container(
-        //           decoration: BoxDecoration(
-        //             color: Color(0xFF4EBE44).withAlpha(51),
-        //             borderRadius: BorderRadius.circular(15),
-        //             border: Border.all(
-        //               color: Color(0xFF4EBE44).withAlpha(78),
-        //               width: 1,
-        //             ),
-        //           ),
-        //           child: IconButton(
-        //             onPressed: () {
-        //               _scaffoldKey.currentState?.openEndDrawer();
-        //             },
-        //             icon: const Icon(
-        //               Icons.menu_rounded,
-        //               color: Color(0xFFFFF8F0),
-        //               size: 28,
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: CustomSectionHeader(title: "Hello Farmer", showDialog: true),
+          preferredSize: Size.fromHeight(100),
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 40, 20, 15),
+            decoration: BoxDecoration(color: Color(0xff01342C)),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        localizedStrings['hello farmer'] ?? "Hello Farmer",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Let's grow together 🌱",
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFF4EBE44).withAlpha(51),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
+                      color: Color(0xFF4EBE44).withAlpha(78),
+                      width: 1,
+                    ),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      _scaffoldKey.currentState?.openEndDrawer();
+                    },
+                    icon: const Icon(
+                      Icons.menu_rounded,
+                      color: Color(0xFFFFF8F0),
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           physics: BouncingScrollPhysics(),

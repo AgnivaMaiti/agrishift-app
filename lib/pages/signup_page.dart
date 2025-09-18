@@ -1,6 +1,8 @@
 import 'package:agro/providers/language_provider.dart';
+import 'package:agro/models/user_model.dart';
 import 'package:agro/pages/farmer_main.dart';
 import 'package:agro/pages/signin_page.dart';
+import 'package:agro/providers/user_provider.dart';
 import 'package:agro/utils/transitions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,11 +37,25 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  void _handleSignUp() {
+  Future<void> _handleSignUp() async {
     if (_formKey.currentState!.validate()) {
-      print('Name: ${_nameController.text}');
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      
+      // Create a new user
+      final newUser = UserModel(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+        userType: widget.userType,
+      );
+      
+      // Save user data
+      await userProvider.login(newUser);
+      
+      // Navigate to home screen after successful signup
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/');
+      }
     }
   }
 
@@ -148,8 +164,10 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: _handleSignUp,
+                GestureDetector(
+                  onTap: () async {
+                    await _handleSignUp();
+                  },
                   child: Container(
                     width: w * 0.5,
                     height: h * 0.05,
@@ -176,7 +194,10 @@ class _SignUpState extends State<SignUp> {
                   indent: 0,
                   endIndent: 0,
                 ),
-                InkWell(
+                GestureDetector(
+                  onTap: () {
+                    // Handle Google sign up
+                  },
                   child: Container(
                     width: w * 0.8,
                     height: h * 0.05,
@@ -194,7 +215,7 @@ class _SignUpState extends State<SignUp> {
                         SizedBox(width: w * 0.02),
                         Text(
                           localizedStrings['google signup'] ??
-                              'Sign up in with Google',
+                              'Sign up with Google',
                         ),
                       ],
                     ),

@@ -1,9 +1,12 @@
+import 'package:agro/models/user_model.dart';
 import 'package:agro/providers/language_provider.dart';
+import 'package:agro/providers/user_provider.dart';
 import 'package:agro/utils/transitions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'signup_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'farmer_home.dart';
+import 'signup_page.dart';
 
 class SignIn extends StatefulWidget {
   final String userType;
@@ -27,12 +30,28 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  void _handleSignIn() {
+  Future<void> _handleSignIn() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => FarmerHome()),
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      
+      // In a real app, you would validate the credentials with your backend
+      // For now, we'll just create a mock user
+      final mockUser = UserModel(
+        name: 'Demo User', // This would come from your backend
+        email: '${_phoneController.text}@example.com',
+        phone: _phoneController.text,
+        userType: widget.userType,
       );
+      
+      // Save user data
+      await userProvider.login(mockUser);
+      
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FarmerHome()),
+        );
+      }
     }
   }
 
@@ -154,8 +173,10 @@ class _SignInState extends State<SignIn> {
                       ],
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    InkWell(
-                      onTap: _handleSignIn,
+                    GestureDetector(
+                      onTap: () async {
+                        await _handleSignIn();
+                      },
                       child: Container(
                         width: w * 0.6,
                         height: MediaQuery.of(context).size.height * 0.05,
@@ -184,7 +205,10 @@ class _SignInState extends State<SignIn> {
                       endIndent: 0,
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    InkWell(
+                    GestureDetector(
+                      onTap: () {
+                        // Handle Google sign in
+                      },
                       child: Container(
                         width: w * 0.8,
                         height: h * 0.05,
